@@ -29,7 +29,7 @@ class PlayerTest {
      */
 
     @Test
-    fun `player should strat with empty openCards and empty hiddenCards `() {
+    fun `player should start with empty openCards and empty hiddenCards `() {
         val player = Player("Mohammad ElZein")
         assertTrue ( player.hiddenCards.isEmpty())
         assertTrue ( player.openCards.isEmpty())
