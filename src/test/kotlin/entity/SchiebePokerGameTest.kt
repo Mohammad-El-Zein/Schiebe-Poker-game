@@ -18,9 +18,10 @@ class SchiebePokerGameTest {
     }
 
 
-    /**Verifies that when game starrt have empty collections*/
+    /**Verifies that when game start have list of players empty, moveLog empty, centerCards empty , drawPile empty
+     *  , discradPile empty*/
     @Test
-    fun `when game start, should start with list of players is empty, moveLog is empty, centrCards is empty, drawPile is empty, discradPile is empty`() {
+    fun `when game start, should start with empty (list of players, moveLog, centerCards , drawPile , discradPile)`() {
         assertTrue(game.players.isEmpty())
         assertTrue(game.moveLog.isEmpty())
         assertTrue(game.centerCards.isEmpty())
@@ -28,9 +29,9 @@ class SchiebePokerGameTest {
         assertTrue(game.discardPile.isEmpty())
     }
 
-    /**Verifies that when game start is currentRound and countAction and CurrentPlayer are 0*/
+    /**Verifies that when game start is currentRound and gameRound and countAction and CurrentPlayer are 0 */
     @Test
-    fun `when game start, should start with  currentRound is 0, countAction is 0, gameRound is 0,currentPlayer is 0` () {
+    fun `when game start, should start with 0 (currentRound, countAction, gameRound,currentPlayer)` () {
         assertEquals(0, game.currentRound)
         assertEquals(0, game.countAction)
         assertEquals(0, game.gameRound)
