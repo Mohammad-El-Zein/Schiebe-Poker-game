@@ -10,4 +10,32 @@ package service
  *
  * @see AbstractRefreshingService
  */
-interface Refreshable
+interface Refreshable {
+
+    /**aufrufen nachdem ein Spiel start*/
+    fun refreshAfterGameStart() {
+
+    }
+    /**aufrufen nachdem ein Turn beginnt*/
+    fun refreshAfterTurnStart() {
+
+    }
+    /**aufrufen nachdem ein Turn endet*/
+    fun refreshAfterTurnEnd() {
+
+    }
+    /**aufrufen nachdem ein Spiel endet*/
+    fun refreshAfterGameEnd() {
+
+    }
+    /**aufrufen nachdem Nachziehstapel ist wieder voll*/
+    fun refreshAfterRefillStack() {
+
+    }
+    /**aufrufen nachdem Action ausführen von ein Spieler */
+    fun refreshAfterAction() {
+
+    }
+
+
+}
