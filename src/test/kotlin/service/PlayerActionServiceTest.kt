@@ -182,6 +182,28 @@ class PlayerActionServiceTest {
     }
 
     /**
+     * Fehler meldung wenn swapOneCard mit ungültigen playercard index
+     */
+    @Test
+    fun ` if swapOneCard with a invalid playerCard Index should throw`() {
+        assertFailsWith<IllegalArgumentException> {
+            rootService.playerActionService.swapOneCard(3, 0)
+            // hier  playerCardidx 3 existiert nicht also max 2
+        }
+    }
+
+    /**
+     * Fehler meldung wenn swapOneCard mit ungültigen sharedCard index
+     */
+    @Test
+    fun `if swapOneCard with a invalid sharedCard Index should throw`() {
+        assertFailsWith<IllegalArgumentException> {
+            rootService.playerActionService.swapOneCard(0, 3)
+            // hier sharedCardIdx 3 existiert nicht max 2 auch
+        }
+    }
+
+    /**
      * mit swapAllCards wird alle 3 handKarten mit gleiche idx auf 3 mitteleKarten getauscht
      * zb idx 0 in handCArd mit idx 0 in mitteleCard
      */
@@ -208,8 +230,19 @@ class PlayerActionServiceTest {
 
     }
 
+    /** Nach endTurn muss countAction = 0 zurückgesetzt für nächsten Spieler.
+     */
+    @Test
+    fun `should countAction  be null after endTurn`() {
+        val game = rootService.currentGame!!
 
+        rootService.playerActionService.pushRight()
+        rootService.playerActionService.swapAllCards()
+        assertEquals(2, game.countAction)
 
+        rootService.gameService.endTurn()
+        assertEquals(0, game.countAction)
+    }
 
 
 
