@@ -24,6 +24,7 @@ class SchiebePokerGame (
     var currentRound: Int = 0,
     var countAction: Int = 0,
     val moveLog: MutableList<String> = mutableListOf(),
+    var score: MutableList<MutableList<Any>> = mutableListOf(),
 
     val drawPile : MutableList<Card> = mutableListOf(),
     val discardPile : MutableList<Card> = mutableListOf(),

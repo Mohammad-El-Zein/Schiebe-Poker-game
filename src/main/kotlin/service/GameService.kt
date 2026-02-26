@@ -180,7 +180,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
     fun endGame() {
         val game = requireGame()
 
-        val ranking = calculateRanking()
+        val ranking = calculateScore()
 
         createLogEntry("Game ended after ${game.gameRound} rounds.")
 
@@ -193,9 +193,38 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      * Berechnet die Rangliste der Spieler basierend auf ihrer hand karten stärke.
      * @return Eine sortierte Liste des Spieler vom Gewinner zum Verlierer.
      */
-    fun calculateRanking(): List<Player> {
+    fun calculateScore(): List<Player> {
         val game = requireGame()
-        return game.players.sortedByDescending { calculateHandCards(it) }
+        val sortedPlayers =  game.players.sortedByDescending { calculateHandCards(it) }
+
+        game.score.clear()
+        for (player in sortedPlayers) {
+            val handValue = calculateHandCards(player)
+            val handName = handValueToString(handValue)
+            val cards = player.hiddenCards + player.openCards
+
+            val row: MutableList<Any> = mutableListOf(
+                player.name,
+                handName,
+            )
+            row.addAll(cards) // die 5 Karten
+            game.score.add(row)
+        }
+
+        return sortedPlayers
+    }
+
+    private fun handValueToString(value: Int): String = when (value) {
+        9    -> "Royal Flush"
+        8    -> "Straight Flush"
+        7    -> "Vierling"
+        6    -> "Full House"
+        5    -> "Flush"
+        4    -> "Straße"
+        3    -> "Drilling"
+        2    -> "Zwei Paare"
+        1    -> "Ein Paar"
+        else -> "Höchste Karte"
     }
 
     /**

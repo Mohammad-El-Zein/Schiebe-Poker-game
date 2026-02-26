@@ -196,7 +196,7 @@ class GameServiceTest {
         rootService.gameService.createGame(listOf("Mohammad", "Zein"), 2)
         val game = rootService.currentGame!!
 
-        val ranking = rootService.gameService.calculateRanking()
+        val ranking = rootService.gameService.calculateScore()
 
         assertEquals(game.players.size, ranking.size)
     }
@@ -238,18 +238,10 @@ class GameServiceTest {
             Card(CardSuit.SPADES, CardValue.SEVEN)
         ))
 
-        val ranking = rootService.gameService.calculateRanking()
+        val ranking = rootService.gameService.calculateScore()
         assertEquals("Mohammad", ranking[0].name)
         assertEquals("Zein", ranking[1].name)
     }
-
-
-
-
-
-
-
-
 
 
 }
