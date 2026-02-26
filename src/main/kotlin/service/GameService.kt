@@ -98,7 +98,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
     /**
      * Erstellt alle  52 Spielkarten und mischt ihn.
      */
-    private fun createDrawStack(): MutableList<Card> {
+    fun createDrawStack(): MutableList<Card> {
         val deck = mutableListOf<Card>()
         for (suit in CardSuit.values()) {
             for (value in CardValue.values()) {
@@ -136,7 +136,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      *wenn Nachziehstapel leer ist, dann mischt den Ablagestapel  in den Nachziehstapel.
      * automatish aurufen wenn Nachziehstapel leer sind
      */
-    private fun refillDrawStack() {
+     fun refillDrawStack() {
         val game = requireGame()
 
         //wenn ablagestpel ist leer dann
@@ -197,18 +197,17 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val game = requireGame()
         val sortedPlayers =  game.players.sortedByDescending { calculateHandCards(it) }
 
-        game.score.clear()
-        for (player in sortedPlayers) {
-            val handValue = calculateHandCards(player)
-            val handName = handValueToString(handValue)
-            val cards = player.hiddenCards + player.openCards
-
-            val row: MutableList<Any> = mutableListOf(
-                player.name,
-                handName,
+        game.playerScores.clear()
+        sortedPlayers.forEachIndexed { platzierung, player ->
+            val playerIndex = game.players.indexOf(player)
+            val handName = handValueToString(calculateHandCards(player))
+            game.playerScores.add(
+                Triple(
+                    playerIndex,      // z.B. 0, 1, 2
+                    platzierung + 1,  // z.B. 1, 2, 3
+                    handName          // z.B. "Royal Flush"
+                )
             )
-            row.addAll(cards) // die 5 Karten
-            game.score.add(row)
         }
 
         return sortedPlayers
