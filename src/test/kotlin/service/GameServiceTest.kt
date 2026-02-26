@@ -205,7 +205,7 @@ class GameServiceTest {
      * muss Spieler mit zb Royal Flush  steht vor Spieler mit straight Flush .
      */
     @Test
-    fun claculateRAnking() {
+    fun calculateRanking() {
         rootService.gameService.createGame(listOf("Mohammad", "Zein"), 3)
         val game = rootService.currentGame!!
 
@@ -213,6 +213,8 @@ class GameServiceTest {
         val zein = game.players.first { it.name == "Zein" }
 
        //sei Mohammad zb hat index 0 , und bekommt Royal Flush
+        mohammad.hiddenCards.clear()
+        mohammad.openCards.clear()
         mohammad.hiddenCards.addAll(listOf(
             Card(CardSuit.DIAMONDS, CardValue.QUEEN),
             Card(CardSuit.DIAMONDS, CardValue.KING)
@@ -224,6 +226,8 @@ class GameServiceTest {
         ))
 
         // Sei Zein hat index 1 und bekommt Straight Flush
+        zein.hiddenCards.clear()
+        zein.openCards.clear()
         zein.hiddenCards.addAll(listOf(
             Card(CardSuit.SPADES, CardValue.FIVE),
             Card(CardSuit.SPADES, CardValue.FOUR)
