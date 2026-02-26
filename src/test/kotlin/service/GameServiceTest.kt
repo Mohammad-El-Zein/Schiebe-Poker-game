@@ -209,23 +209,26 @@ class GameServiceTest {
         rootService.gameService.createGame(listOf("Mohammad", "Zein"), 3)
         val game = rootService.currentGame!!
 
+        val mohammad = game.players.first { it.name == "Mohammad" }
+        val zein = game.players.first { it.name == "Zein" }
+
        //sei Mohammad zb hat index 0 , und bekommt Royal Flush
-        game.players[0].hiddenCards.addAll(listOf(
+        mohammad.hiddenCards.addAll(listOf(
             Card(CardSuit.DIAMONDS, CardValue.QUEEN),
             Card(CardSuit.DIAMONDS, CardValue.KING)
         ))
-        game.players[0].openCards.addAll(listOf(
+        mohammad.openCards.addAll(listOf(
             Card(CardSuit.DIAMONDS, CardValue.TEN),
             Card(CardSuit.DIAMONDS, CardValue.ACE),
             Card(CardSuit.DIAMONDS, CardValue.JACK)
         ))
 
         // Sei Zein hat index 1 und bekommt Straight Flush
-        game.players[1].hiddenCards.addAll(listOf(
+        zein.hiddenCards.addAll(listOf(
             Card(CardSuit.SPADES, CardValue.FIVE),
             Card(CardSuit.SPADES, CardValue.FOUR)
         ))
-        game.players[1].openCards.addAll(listOf(
+        zein.openCards.addAll(listOf(
             Card(CardSuit.SPADES, CardValue.SIX),
             Card(CardSuit.SPADES, CardValue.EIGHT),
             Card(CardSuit.SPADES, CardValue.SEVEN)

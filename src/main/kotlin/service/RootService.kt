@@ -8,8 +8,7 @@ import  entity.SchiebePokerGame
  */
 class RootService {
     /** aktuelle Spielzustand ist immer null wenn die Spiel laüft noch nicht. */
-    var currentGame: SchiebePokerGame? = null
-
+        var currentGame: SchiebePokerGame? = null
 
         /** enthält alle Spiel logik wie Karten,Turn usw... */
         val gameService = GameService(this)

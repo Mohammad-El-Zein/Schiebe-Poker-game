@@ -18,10 +18,10 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
 
         // Linke Karte (Index 0) auf Ablagestapel und wird automatish die 2 karte aufmitte nach links shieben
         val leftdiscardedCard = game.centerCards.removeAt(0)
+        val newCard = rootService.gameService.drawCard() // neue Karte von Nachziehstapel rechts einfügen (in Index 2)
+
         game.discardPile.add(leftdiscardedCard)
 
-        // neue Karte von Nachziehstapel rechts einfügen (in Index 2)
-        val newCard = rootService.gameService.drawCard()
         game.centerCards.add(newCard) // fügt am Ende Idx 2
 
         rootService.gameService.createLogEntry(
@@ -45,10 +45,11 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
 
         // Rechte Karte (Index 2) auf Ablagestapel und wird automatish die 2 karte auf mitte nach rechts shieben
         val rightdiscardedCard = game.centerCards.removeAt(2)
+
+        val newCard = rootService.gameService.drawCard()  // Neue Karte vom Nachziehstapel links einfügen (Index 0)
+
         game.discardPile.add(rightdiscardedCard)
 
-        // Neue Karte vom Nachziehstapel links einfügen (Index 0)
-        val newCard = rootService.gameService.drawCard()
         game.centerCards.add(0, newCard) // fügt am anfang an Idx 0
 
         rootService.gameService.createLogEntry(

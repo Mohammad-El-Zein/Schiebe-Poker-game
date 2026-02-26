@@ -68,7 +68,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      */
     fun consumeAction() {
         val game = requireGame()
-        require(game.countAction < 2) { "Player hat schon 2 Aktionen ausgeführt." }
+        require(game.countAction < 2) { "Player has already performed 2 actions." }
         game.countAction++
         onAllRefreshables { refreshAfterAction() }
     }
@@ -184,7 +184,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
         createLogEntry("Game ended after ${game.gameRound} rounds.")
 
-        onAllRefreshables { refreshAfterGameEnd() }
+        onAllRefreshables { refreshAfterGameEnd(ranking) }
 
     }
 
@@ -226,7 +226,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
         val isSameSuits = suits.distinct().size == 1 //gleiche suit
         val sortedValues = values.sorted()
-        val isStraightedValue = sortedValues.last() - sortedValues.first() == 4//sortieres value,zb 2 bis 6,6-2=4, size=5
+        val isStraightedValue = sortedValues.last() - sortedValues.first() == 4//sortieres value,zb 2 bis 6,6-2=4,size=5
                 && sortedValues.distinct().size == 5
 
 
@@ -235,7 +235,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val isStraight = isStraightedValue || isAceLowStraight
 
         return when {
-            isSameSuits && isStraight && counts == listOf(10, 11, 12, 13, 14) -> 9 // Royal Flush
+            isSameSuits && isStraight && values.contains(14) && values.contains(10) -> 9 // Royal Flush
             isSameSuits && isStraight       -> 8 // Straight Flush
             counts == listOf(4, 1)        -> 7 // Four of a Kind
             counts == listOf(3, 2)       -> 6 // Full House
@@ -243,7 +243,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
             isStraight                    -> 4 // Straight
             counts == listOf(3, 1, 1)        -> 3 // Three of a Kind
             counts == listOf(2, 2, 1)       -> 2 // Two Pair
-            counts == listOf(2, 1, 1)       -> 1 // one Pair
+            counts == listOf(2, 1, 1, 1)       -> 1 // one Pair
             else                             -> 0 //  High Card
         }
     }
