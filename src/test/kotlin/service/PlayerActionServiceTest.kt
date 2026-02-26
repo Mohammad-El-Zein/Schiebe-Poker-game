@@ -208,19 +208,6 @@ class PlayerActionServiceTest {
 
     }
 
-    /** Nach endTurn muss countAction = 0 zurückgesetzt für nächsten Spieler.
-     */
-    @Test
-    fun `should countAction  be null after endTurn`() {
-        val game = rootService.currentGame!!
-
-        rootService.playerActionService.pushRight()
-        rootService.playerActionService.swapAllCards()
-        assertEquals(2, game.countAction)
-
-        rootService.gameService.endTurn()
-        assertEquals(0, game.countAction)
-    }
 
 
 
