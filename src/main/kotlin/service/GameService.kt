@@ -45,7 +45,8 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
     }
 
     /**
-     * Hilfsfunktion indem aktuelle Spiel zurückgibt und meldet fehler wenn kein spiel gestartet
+     * Hilfsfunktion stellt sicher dass ein Spiel aktiv ist, bevor wir eine Aktion ausführen.
+     * meldet fehler wenn kein spiel gestartet
 
      */
     private fun requireGame(): SchiebePokerGame =
@@ -152,7 +153,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         onAllRefreshables { refreshAfterRefillStack() }
     }
 
-    /**aurufen wenn Nachziehstapel leer sind*/
+    /**aurufen wenn push right oder left mit überprufung von draw pile ob emtpy ist*/
     fun drawCard(): Card {
         val game = requireGame()
 

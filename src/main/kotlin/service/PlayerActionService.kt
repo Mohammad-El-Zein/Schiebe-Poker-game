@@ -12,6 +12,8 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
      *  Linke Karte → Ablagestapel
      *  Mittlere und rechte Karte rücken einen Platz nach links schieben
      *  Eine karte vom Nachziehstapel Karten wird am Recht hinzugefügt
+     *
+     *
      */
     fun pushLeft() {
         val game = requireGame()
@@ -26,8 +28,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
 
         rootService.gameService.createLogEntry(
             "(\${game.players[game.currentPlayer].name})" +
-                    "shifted the cards to the left."
-                    + "Discarded: $leftdiscardedCard, New card: $newCard"
+                    "shifted the cards to the left." + "Discarded: $leftdiscardedCard, New card: $newCard"
         )
 
         rootService.gameService.consumeAction()//countAction++
