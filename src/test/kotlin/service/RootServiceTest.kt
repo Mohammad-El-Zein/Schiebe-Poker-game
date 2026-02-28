@@ -15,7 +15,6 @@ class RootServiceTest {
         rootService = RootService()
     }
 
-
     /** vor die createGame muss die currentGame null seein*/
     @Test
     fun ` current game should be null before the start`() {
@@ -35,12 +34,5 @@ class RootServiceTest {
         assertNotNull(rootService.gameService)
         assertNotNull(rootService.playerActionService)
     }
-
-
-
-
-
-
-
 
 }
