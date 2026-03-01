@@ -24,14 +24,14 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
 
         game.discardPile.add(leftdiscardedCard)
 
-        game.centerCards.add(newCard) // fügt am Ende Idx 2
+        game.centerCards.add(2,newCard) // fügt am Ende Idx 2
 
         rootService.gameService.createLogEntry(
             "(\${game.players[game.currentPlayer].name})" +
                     "shifted the cards to the left." + "Discarded: $leftdiscardedCard, New card: $newCard"
         )
 
-        rootService.gameService.consumeAction()//countAction++
+        rootService.gameService.consumeAction() //countAction++
         onAllRefreshables { refreshAfterAction() }
     }
 

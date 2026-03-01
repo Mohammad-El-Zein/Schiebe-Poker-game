@@ -23,7 +23,9 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         require(gameRound in 2..7) { "gameRound must be 'minimum 2'..'7 Maximum'" }
 
         val game = SchiebePokerGame()
+
         game.gameRound = gameRound
+
         game.currentRound = 1
 
         val startIndex = playerNames.indices.random()
@@ -64,6 +66,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
     }
 
     /**
+     * hilfsfunktion wird nach ejder action aufrufen
      * Registrieren die ausgeführte Aktion des aktuellen Spieler mit max 2 Actionen durchführen
      * @throws IllegalArgumentException wenn spieler bereit zwei Aktionen ausgeführt hat.
      */
@@ -153,7 +156,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         onAllRefreshables { refreshAfterRefillStack() }
     }
 
-    /**aurufen wenn push right oder left mit überprufung von draw pile ob emtpy ist*/
+    /**hilfsfunktion:aurufen wenn push right oder left mit überprufung von draw pile ob emtpy ist*/
     fun drawCard(): Card {
         val game = requireGame()
 
@@ -161,7 +164,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
             refillDrawStack()
         }
 
-        return game.drawPile.removeLast()
+        return game.drawPile.removeLast() //nimmt letzte karte auf nachziehstapel
     }
 
 
@@ -196,10 +199,12 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      */
     fun calculateScore(): List<Player> {
         val game = requireGame()
+
+        //sortiereung basirtet auf die hand sträke
         val sortedPlayers =  game.players.sortedByDescending { calculateHandCards(it) }
 
         game.playerScores.clear()
-        sortedPlayers.forEachIndexed { platzierung, player ->
+        sortedPlayers.forEachIndexed { platzierung, player -> // wird platzierung gegeben für sortedPlayers
             val playerIndex = game.players.indexOf(player)
             val handName = handValueToString(calculateHandCards(player))
             game.playerScores.add(
@@ -246,12 +251,12 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      * @return numerischer Wert der Handstärke.
      */
     private fun calculateHandCards(player: Player): Int {
-        val hand = player.hiddenCards + player.openCards
-        val values = hand.map { valuesToInt(it.value) }
-        val suits = hand.map { it.suit }
+        val hand = player.hiddenCards + player.openCards // 5 karten für jede spieler
+        val values = hand.map { valuesToInt(it.value) } // 5 hand karten in zahlen wechseln
+        val suits = hand.map { it.suit } // liste der farben
 
-        val valueCounts = values.groupingBy { it }.eachCount()
-        val counts = valueCounts.values.sortedDescending()
+        val valueCounts = values.groupingBy { it }.eachCount() // jede vaalue wie viel mal es gibt
+        val counts = valueCounts.values.sortedDescending() // zb (4,1): 4 karten gleiche value, 1karte andere value
 
         val isSameSuits = suits.distinct().size == 1 //gleiche suit
         val sortedValues = values.sorted()
