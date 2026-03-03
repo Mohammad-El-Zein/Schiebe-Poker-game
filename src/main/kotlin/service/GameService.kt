@@ -252,7 +252,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      */
     private fun calculateHandCards(player: Player): Int {
         val hand = player.hiddenCards + player.openCards // 5 karten für jede spieler
-        val values = hand.map { valuesToInt(it.value) } // 5 hand karten in zahlen wechseln
+        val values = hand.map { valuesToInt(it.value) } // 5 hand karten in Int wechseln
         val suits = hand.map { it.suit } // liste der farben
 
         val valueCounts = values.groupingBy { it }.eachCount() // jede vaalue wie viel mal es gibt
@@ -264,9 +264,9 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
                 && sortedValues.distinct().size == 5
 
 
-        val isAceLowStraight = sortedValues == listOf(2, 3, 4, 5, 14) //Ass hat wert 14 aber kann reinfolge (ass,2,3,4)
+        val aceStraight = sortedValues == listOf(2, 3, 4, 5, 14) //Ass hat wert 14 aber kann reinfolge (ass,2,3,4)
 
-        val isStraight = isStraightedValue || isAceLowStraight
+        val isStraight = isStraightedValue || aceStraight
 
         return when {
             isSameSuits && isStraight && values.contains(14) && values.contains(10) -> 9 // Royal Flush

@@ -38,6 +38,7 @@ class PlayerActionServiceTest {
 
         rootService.playerActionService.pushLeft()
 
+
         assertEquals(leftCard, game.discardPile.last())
 
 

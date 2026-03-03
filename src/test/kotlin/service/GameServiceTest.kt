@@ -219,11 +219,16 @@ class GameServiceTest {
             Card(CardSuit.DIAMONDS, CardValue.QUEEN),
             Card(CardSuit.DIAMONDS, CardValue.KING)
         ))
+
+
         mohammad.openCards.addAll(listOf(
             Card(CardSuit.DIAMONDS, CardValue.TEN),
             Card(CardSuit.DIAMONDS, CardValue.ACE),
             Card(CardSuit.DIAMONDS, CardValue.JACK)
         ))
+        println("DEBUG: Mohammad Hidden: ${mohammad.hiddenCards}")
+        println("DEBUG: Mohammad Open: ${mohammad.openCards}")
+
 
         // Sei Zein hat index 1 und bekommt Straight Flush
         zein.hiddenCards.clear()
@@ -237,6 +242,8 @@ class GameServiceTest {
             Card(CardSuit.SPADES, CardValue.EIGHT),
             Card(CardSuit.SPADES, CardValue.SEVEN)
         ))
+        println("DEBUG: Zein Hidden: ${zein.hiddenCards}")
+        println("DEBUG: Zein Open: ${zein.openCards}")
 
         val ranking = rootService.gameService.calculateScore()
         assertEquals("Mohammad", ranking[0].name)
