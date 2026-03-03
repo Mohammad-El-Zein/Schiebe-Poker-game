@@ -27,7 +27,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         game.centerCards.add(2,newCard) // fügt am Ende Idx 2
 
         rootService.gameService.createLogEntry(
-            "(\${game.players[game.currentPlayer].name})" +
+            "(${game.players[game.currentPlayer].name})" +
                     "shifted the cards to the left." + "Discarded: $leftdiscardedCard, New card: $newCard"
         )
 
@@ -54,7 +54,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         game.centerCards.add(0, newCard) // fügt am anfang an Idx 0
 
         rootService.gameService.createLogEntry(
-            "(\${game.players[game.currentPlayer].name})" +
+            "(${game.players[game.currentPlayer].name})" +
                     "shifted the cards to the right."
                     + "Discarded: $rightdiscardedCard, New card: $newCard"
         )

@@ -102,7 +102,9 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
     /**
      * Erstellt alle  52 Spielkarten und mischt ihn.
      */
-    fun createDrawStack(): MutableList<Card> {
+    private fun createDrawStack() {
+        val game = requireGame()
+
         val deck = mutableListOf<Card>()
         for (suit in CardSuit.values()) {
             for (value in CardValue.values()) {
@@ -111,7 +113,8 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         }
 
         deck.shuffle()
-        return deck
+        game.drawPile.clear()
+        game.drawPile.addAll(deck)
     }
 
     /**
@@ -122,8 +125,8 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      */
     private fun setUpCards() {
         val game = requireGame()
-        val deck = createDrawStack()
-
+        createDrawStack()
+        val deck = game.drawPile
         // jede player hat 2 hidden + 3 open
         for (player in game.players) {
             repeat(2) { player.hiddenCards.add(deck.removeLast()) }
@@ -132,7 +135,6 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
         repeat(3) { game.centerCards.add(deck.removeLast()) }
 
-        game.drawPile.addAll(deck)
     }
 
 
@@ -184,11 +186,11 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
     fun endGame() {
         val game = requireGame()
 
-        val ranking = calculateScore()
+        calculateScore()
 
         createLogEntry("Game ended after ${game.gameRound} rounds.")
 
-        onAllRefreshables { refreshAfterGameEnd(ranking) }
+        onAllRefreshables { refreshAfterGameEnd() }
 
     }
 
@@ -197,26 +199,22 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      * Berechnet die Rangliste der Spieler basierend auf ihrer hand karten stärke.
      * @return Eine sortierte Liste des Spieler vom Gewinner zum Verlierer.
      */
-    fun calculateScore(): List<Player> {
+    private fun calculateScore() {
         val game = requireGame()
 
-        //sortiereung basirtet auf die hand sträke
-        val sortedPlayers =  game.players.sortedByDescending { calculateHandCards(it) }
+        val sortedPlayers =
+            game.players.sortedByDescending { calculateHandCards(it) }
 
         game.playerScores.clear()
-        sortedPlayers.forEachIndexed { platzierung, player -> // wird platzierung gegeben für sortedPlayers
+
+        sortedPlayers.forEachIndexed { platzierung, player ->
             val playerIndex = game.players.indexOf(player)
             val handName = handValueToString(calculateHandCards(player))
+
             game.playerScores.add(
-                Triple(
-                    playerIndex,      // z.B. 0, 1, 2
-                    platzierung + 1,  // z.B. 1, 2, 3
-                    handName          // z.B. "Royal Flush"
-                )
+                Triple(playerIndex, platzierung + 1, handName)
             )
         }
-
-        return sortedPlayers
     }
 
     private fun handValueToString(value: Int): String = when (value) {

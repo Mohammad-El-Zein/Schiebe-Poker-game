@@ -27,7 +27,7 @@ interface Refreshable {
 
     }
     /**aufrufen nachdem ein Spiel endet*/
-    fun refreshAfterGameEnd(ranking: List<Player>) {
+    fun refreshAfterGameEnd() {
 
     }
     /**aufrufen nachdem Nachziehstapel ist wieder voll*/
