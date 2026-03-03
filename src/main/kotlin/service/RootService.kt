@@ -1,7 +1,6 @@
 package service
 
 import  entity.SchiebePokerGame
-import gui.GameScene
 
 /**
  * The root service class is responsible for managing services and the entity layer reference.
@@ -22,7 +21,7 @@ class RootService {
          * Registriert einen Refreshable-UI-Komponente bei allen Services, die Aktualisierungsereignisse auslösen.
          * Diese Methode sollte einmal pro Bildschirm aufgerufen werden, das auf Zustandsänderungen reagieren soll.
          */
-        fun addRefreshable(newRefreshable: GameScene) {
+        fun addRefreshable(newRefreshable: Refreshable) {
             gameService.addRefreshable(newRefreshable)
             playerActionService.addRefreshable(newRefreshable)
         }
