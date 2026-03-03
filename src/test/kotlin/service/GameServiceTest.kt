@@ -196,13 +196,13 @@ class GameServiceTest {
         rootService.gameService.createGame(listOf("Mohammad", "Zein"), 2)
         val game = rootService.currentGame!!
 
-        val ranking = rootService.gameService.calculateScore()
+        rootService.gameService.endGame()
 
-        assertEquals(game.players.size, ranking.size)
+        assertEquals(game.players.size, game.playerScores.size)
     }
 
     /**
-     * muss Spieler mit zb Royal Flush  steht vor Spieler mit straight Flush .
+     * Muss Spieler mit Royal Flush vor Spieler mit Straight Flush stehen.
      */
     @Test
     fun calculateRanking() {
@@ -212,25 +212,20 @@ class GameServiceTest {
         val mohammad = game.players.first { it.name == "Mohammad" }
         val zein = game.players.first { it.name == "Zein" }
 
-       //sei Mohammad zb hat index 0 , und bekommt Royal Flush
+        // Mohammad bekommt Royal Flush
         mohammad.hiddenCards.clear()
         mohammad.openCards.clear()
         mohammad.hiddenCards.addAll(listOf(
             Card(CardSuit.DIAMONDS, CardValue.QUEEN),
             Card(CardSuit.DIAMONDS, CardValue.KING)
         ))
-
-
         mohammad.openCards.addAll(listOf(
             Card(CardSuit.DIAMONDS, CardValue.TEN),
             Card(CardSuit.DIAMONDS, CardValue.ACE),
             Card(CardSuit.DIAMONDS, CardValue.JACK)
         ))
-        println("DEBUG: Mohammad Hidden: ${mohammad.hiddenCards}")
-        println("DEBUG: Mohammad Open: ${mohammad.openCards}")
 
-
-        // Sei Zein hat index 1 und bekommt Straight Flush
+        // Zein bekommt Straight Flush
         zein.hiddenCards.clear()
         zein.openCards.clear()
         zein.hiddenCards.addAll(listOf(
@@ -242,13 +237,15 @@ class GameServiceTest {
             Card(CardSuit.SPADES, CardValue.EIGHT),
             Card(CardSuit.SPADES, CardValue.SEVEN)
         ))
-        println("DEBUG: Zein Hidden: ${zein.hiddenCards}")
-        println("DEBUG: Zein Open: ${zein.openCards}")
 
-        val ranking = rootService.gameService.calculateScore()
-        assertEquals("Mohammad", ranking[0].name)
-        assertEquals("Zein", ranking[1].name)
+        rootService.gameService.endGame()
+
+
+        val firstPlace = game.playerScores.first { it.second == 1 }
+        val secondPlace = game.playerScores.first { it.second == 2 }
+
+        assertEquals("Mohammad", game.players[firstPlace.first].name)
+        assertEquals("Zein", game.players[secondPlace.first].name)
     }
-
 
 }
