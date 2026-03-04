@@ -29,7 +29,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun testPushLeft() {
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         val leftCard = game.centerCards[0]  // muss abgeleget
         val middleCard = game.centerCards[1]  // muss schieben nach Index 0
@@ -59,7 +59,7 @@ class PlayerActionServiceTest {
     */
     @Test
     fun testPushRight() {
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         val leftCard = game.centerCards[0]  // muss schieben nach Index 1
         val middleCard = game.centerCards[1]  // muss schieben nach Index 2
@@ -87,7 +87,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun ` should add discardPile with drawPile if drawPile empty by pushLeft call `() {
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         // Nachziehstapel leeren, Karten in Ablagestapel
         val cards = game.drawPile.toList()
@@ -109,7 +109,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun ` should add discardPile with drawPile if drawPile empty by pushRight call `() {
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         val cards = game.drawPile.toList()
         game.drawPile.clear()
@@ -142,7 +142,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun testSwapNothing() {
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
         val player = game.players[game.currentPlayer]
 
         val playerCard = player.openCards.toList()
@@ -164,7 +164,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun testSwapOneCard() {
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
         val player = game.players[game.currentPlayer]
 
         val playerCard = player.openCards[2]
@@ -188,7 +188,7 @@ class PlayerActionServiceTest {
      */
     @Test
     fun testSwapAllCards() {
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
         val player = game.players[game.currentPlayer]
 
         val playerCard = player.openCards.toList()

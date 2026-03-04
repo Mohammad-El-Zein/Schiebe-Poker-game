@@ -78,7 +78,7 @@ class GameServiceTest {
     @Test
     fun `test the sum of cards after setUpCards`() {
         rootService.gameService.createGame(listOf("Mohammad", "Zein"), 7)
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         val totalCards = game.players.sumOf { it.hiddenCards.size + it.openCards.size } +
                 game.centerCards.size + game.drawPile.size
@@ -92,7 +92,7 @@ class GameServiceTest {
     @Test
     fun `countAction should increased by 1 after consumeAction call`() {
         rootService.gameService.createGame(listOf("Mo", "Zein"), 2)
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         rootService.gameService.consumeAction()
         assertEquals(1, game.countAction)
@@ -104,7 +104,7 @@ class GameServiceTest {
     @Test
     fun `should currentPlayer index by 1 increased after endTurn call`() {
         rootService.gameService.createGame(listOf("Mohammad", "Zein"), 5)
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         val firstPlayer = game.currentPlayer // hat index 0
 
@@ -121,7 +121,7 @@ class GameServiceTest {
     @Test
     fun `should endTurn for last player resets cuurrentPlayer to 0 and increments currentRound `() {
         rootService.gameService.createGame(listOf("Mo", "Zein"), 5)
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
 
         rootService.gameService.startTurn()
@@ -159,7 +159,7 @@ class GameServiceTest {
     @Test
     fun `If the draw pile is empty, the discard pile is reshuffled and used as the new draw pile`() {
         rootService.gameService.createGame(listOf("Mo", "Z"), 7)
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         // Nachziehstapel leeren und Karten in Ablagestapel legen
         val cards = game.drawPile.toList()
@@ -178,7 +178,7 @@ class GameServiceTest {
     @Test
     fun ` drawPile and discardPile are empty during the game`() {
         rootService.gameService.createGame(listOf("M", "Z"), 2)
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         game.drawPile.clear()
         game.discardPile.clear()   // hier clear machen nur für testing
@@ -194,10 +194,9 @@ class GameServiceTest {
     @Test
     fun `should for each player , a score`() {
         rootService.gameService.createGame(listOf("Mohammad", "Zein"), 2)
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         rootService.gameService.endGame()
-
         assertEquals(game.players.size, game.playerScores.size)
     }
 
@@ -207,12 +206,11 @@ class GameServiceTest {
     @Test
     fun calculateRanking() {
         rootService.gameService.createGame(listOf("Mohammad", "Zein"), 3)
-        val game = rootService.currentGame!!
+        val game = checkNotNull(rootService.currentGame) { "Game should not be null after createGame" }
 
         val mohammad = game.players.first { it.name == "Mohammad" }
         val zein = game.players.first { it.name == "Zein" }
 
-        // Mohammad bekommt Royal Flush
         mohammad.hiddenCards.clear()
         mohammad.openCards.clear()
         mohammad.hiddenCards.addAll(listOf(
@@ -225,7 +223,6 @@ class GameServiceTest {
             Card(CardSuit.DIAMONDS, CardValue.JACK)
         ))
 
-        // Zein bekommt Straight Flush
         zein.hiddenCards.clear()
         zein.openCards.clear()
         zein.hiddenCards.addAll(listOf(
@@ -239,7 +236,6 @@ class GameServiceTest {
         ))
 
         rootService.gameService.endGame()
-
 
         val firstPlace = game.playerScores.first { it.second == 1 }
         val secondPlace = game.playerScores.first { it.second == 2 }
