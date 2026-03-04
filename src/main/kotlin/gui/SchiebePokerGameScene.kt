@@ -17,7 +17,7 @@ import tools.aqua.bgw.visual.ColorVisual
  *  wird aktualisiert sich automatisch nach jeder Aktion über [Refreshable]-Interface.
  *
  */
-class GameScene(private val rootService: RootService) :
+class SchiebePokerGameScene(private val rootService: RootService) :
     BoardGameScene(2020, 1080, background = ColorVisual(Color(34, 100, 34))),
     Refreshable {
 
@@ -32,11 +32,10 @@ class GameScene(private val rootService: RootService) :
         visual = ColorVisual(Color(80, 80, 80))
     )
 
-    // Einzelne Zeilen im Protokoll (maximal 5 sichtbare Einträge)
-    private val logEntries = (0..4).map { i ->
+    private val logEntries = (0..4).map { i ->  // jede label hat 5 max log entries.
         Label(
             width = 690, height = 45,
-            posX = 585, posY = 55 + i * 48,
+            posX = 585, posY = 55 + i * 48, //zb für erste zahl: 55 + 0*48 , zweite: 55 + 1*48 , gleiche abstand
             text = "",
             font = Font(size = 14, color = Color(255, 255, 255))
         )
@@ -56,37 +55,40 @@ class GameScene(private val rootService: RootService) :
             font = Font(size = 18, color = Color(0, 0, 0)),
             visual = ColorVisual(Color(240, 230, 180))),
         Label(width = 160, height = 40,
-            posX = 1710, posY = 200,
+            posX = 1710,
+            posY = 200,
             text = "Spieler 2",
             font = Font(size = 18, color = Color(0, 0, 0)),
             visual = ColorVisual(Color(240, 230, 180))),
         Label(width = 160, height = 40,
-            posX = 1710, posY = 800,
+            posX = 1710,
+            posY = 800,
             text = "Spieler 3",
             font = Font(size = 18, color = Color(0, 0, 0)),
             visual = ColorVisual(Color(240, 230, 180))),
         Label(width = 160, height = 40,
-            posX = 50,   posY = 800,
+            posX = 50,
+            posY = 800,
             text = "Spieler 4",
             font = Font(size = 18, color = Color(0, 0, 0)),
             visual = ColorVisual(Color(240, 230, 180)))
     )
 
-    // Startpositionen der 5 Karten jeder Spieler
+    // Startpositionen der 5 hand Karten jeder Spieler
     private val handCardPositions = listOf(
-        Pair(50,   60),
+        Pair(50,   60), // also (x,y)
         Pair(1420, 60),
         Pair(1420, 860),
         Pair(50,   860)
     )
 
     // Alle Karten aller Spieler
-    private val playerCards: List<List<CardView>> = (0..3).map { idx ->
-        val (x, y) = handCardPositions[idx]
-        (0..4).map { pos ->
+    private val playerCards: List<List<CardView>> = (0..3).map { Index ->
+        val (x, y) = handCardPositions[Index] // pair(x,y) auf handCardPostions nehmen
+        (0..4).map { position ->  // für jede karte auf die 5 karten
             CardView(
                 width = cardW, height = cardH,
-                posX = x + pos * (cardW + 10),
+                posX = x + position * (cardW + 10), // bedeutet abstand zwischen jeder karte ist 10
                 posY = y,
                 front = cardLoader.blankImage,
                 back = cardLoader.backImage
@@ -97,7 +99,8 @@ class GameScene(private val rootService: RootService) :
     //  drei mitte offenen Karten
     private val tableCards = (0..2).map { i ->
         CardView(
-            width = cardW + 20, height = cardH + 30,
+            width = cardW + 20,
+            height = cardH + 30,
             posX = 760 + i * (cardW + 30),
             posY = 450,
             front = cardLoader.blankImage,
@@ -105,7 +108,7 @@ class GameScene(private val rootService: RootService) :
         )
     }
 
-    // Nachziehstapel rechts
+    // Nachziehstapel rechts legen
     private val drawPile = CardView(
         width = cardW + 20, height = cardH + 30,
         posX = 1150, posY = 450,
@@ -113,7 +116,7 @@ class GameScene(private val rootService: RootService) :
         back = cardLoader.backImage
     )
 
-    // Ablagestapel links
+    // Ablagestapel links legen
     private val discardPile = CardView(
         width = cardW + 20, height = cardH + 30,
         posX = 610, posY = 450,
@@ -122,7 +125,7 @@ class GameScene(private val rootService: RootService) :
     )
 
 
-    // Aktions-Buttons
+    // aktion bttn
     val btnSwapOne    = Button(width = 180, height = 55, posX = 760, posY = 790,
         text = "Swap One",    visual = ColorVisual(Color(255, 200, 0)))
     val btnSwapAll    = Button(width = 180, height = 55, posX = 760, posY = 855,
@@ -133,23 +136,22 @@ class GameScene(private val rootService: RootService) :
         text = "Shift Left",  visual = ColorVisual(Color(200, 230, 200)))
     val btnShiftRight = Button(width = 180, height = 55, posX = 960, posY = 855,
         text = "Shift Right", visual = ColorVisual(Color(200, 230, 200)))
-    val btnConfirm    = Button(width = 180, height = 55, posX = 960, posY = 920,
-        text = "Next turn", visual = ColorVisual(Color(180, 180, 180)))
 
-    // Zustand für den Einzelkarten-Tausch
+
+    // Zustand für den Einzelkarten Tausch
     private var swapModeActive = false
     private var chosenCardIdx = -1  // nnoch keine karte
 
     /**
-     * Callback der aufgerufen wird sobald der Spieler beide Karten für den
-     * Einzeltausch ausgewählt hat. Liefert (eigeneKarte, Mittelkarte).
+     *  aufgerufen wird sobald Spieler beide Karten für den
+     * Einzeltausch ausgewählt hat, also seone eigeneKarte und  Mittelkarte).
      */
     var onSwapOneReady: ((playerCardIdx: Int, centerCardIdx: Int) -> Unit)? = null // ?=null kann niemand  schongesetzt
 
     init {
         addComponents(logBox, roundInfo, drawPile, discardPile,
             btnSwapOne, btnSwapAll, btnSwapNone,
-            btnShiftLeft, btnShiftRight, btnConfirm)
+            btnShiftLeft, btnShiftRight)
         logEntries.forEach { addComponents(it) }
         nameLabels.forEach { addComponents(it) }
         playerCards.forEach { cards -> cards.forEach { addComponents(it) } }
@@ -164,7 +166,7 @@ class GameScene(private val rootService: RootService) :
         discardPile.frontVisual = cardLoader.blankImage
         discardPile.showFront()
 
-        // Spieler 3 und 4 erst mal ausblenden
+        // Spieler 3 und 4 erst mal nicht gezeigt ,nur wenn sind hinzugefügt
         nameLabels[2].isVisible = false
         nameLabels[3].isVisible = false
         playerCards[2].forEach { it.isVisible = false }
@@ -172,7 +174,15 @@ class GameScene(private val rootService: RootService) :
     }
 
     // Refreshable-Callbacks
-    override fun refreshAfterAction()      { updateView() }
+    override fun refreshAfterAction() {
+        val game = rootService.currentGame ?: return
+        if (game.countAction == 2) {
+            // Automatisch Zug beenden wenn 2 Aktionen gemacht
+            rootService.gameService.endTurn()
+        } else {
+            updateView()
+        }
+    }
     override fun refreshAfterTurnStart()   { updateView() }
     override fun refreshAfterTurnEnd()     { updateView() }
     override fun refreshAfterRefillStack() { updateView() }
@@ -190,8 +200,8 @@ class GameScene(private val rootService: RootService) :
         val game = rootService.currentGame ?: return
         val who = game.currentPlayer
 
-        for (j in 0..2) {
-            val viewIdx = j + 2  //da offenen Karten am unsere gui an Idx 2,3,4 liegen.
+        for (j in 0..2) {  //handkart
+            val viewIdx = j + 2  //da offenen Karten am unsere gui an Idx 2,3,4 liegen, also ist was sehen in gui idx
             val backendIdx = j  // normal index in spiellogik, also normal idx 0,1,2
             playerCards[who][viewIdx].onMouseClicked = {
                 chosenCardIdx = backendIdx
@@ -199,16 +209,15 @@ class GameScene(private val rootService: RootService) :
             }
         }
 
-        for (k in 0..2) {
+        for (k in 0..2) {  //mittelkart
             val viewIndex = k
             tableCards[k].onMouseClicked = {
                 if (chosenCardIdx != -1) {
-                    // also invoke hier ist ruf dieses funktion wenn nicht null ist
+                    // also invoke hier ist , ruf dieses funktion wenn nicht null ist
                     onSwapOneReady?.invoke(chosenCardIdx, viewIndex)
                     cancelSwapOneMode()
 
-                    //Wenn onSwapOneReady gesetzt ist, rufe sie mit den Argumenten chosenCardIdx
-                    // und viewIndex auf
+
                 }
             }
         }
@@ -280,62 +289,62 @@ class GameScene(private val rootService: RootService) :
 
         roundInfo.text = "Runde ${game.currentRound} / ${game.gameRound}" //7aktuelle runde gezeigt
 
-        // Spieler Bereich aktualisieren, zb wnn 2 spieler, wird die SpieleIdx 2 und 3 nicht gezeigt
+        // Spieler Bereich aktualisieren, zb wnn 2 spieler, wird die name label für SpieleIdx 2 und 3 nicht gezeigt
         for (i in 0..3) {
             val isInGame = i < game.players.size
             nameLabels[i].isVisible = isInGame
             playerCards[i].forEach { it.isVisible = isInGame }
 
             if (isInGame) {
-                val pIdx = i
-                val player = game.players[pIdx]
-                nameLabels[pIdx].text = player.name
+                val playerIndx = i
+                val player = game.players[playerIndx]
+                nameLabels[playerIndx].text = player.name
 
                 // Aktiver Spieler muss blau sein , alle anderen beige
-                nameLabels[pIdx].visual = if (pIdx == game.currentPlayer)
+                nameLabels[playerIndx].visual = if (playerIndx == game.currentPlayer)
                     ColorVisual(Color(100, 180, 255))
                 else
                     ColorVisual(Color(240, 230, 180))
 
                 // Verdeckte Karten sind nochmal normal und verdeckt
-                playerCards[pIdx][0].scaleX = 1.0
-                playerCards[pIdx][0].scaleY = 1.0
-                playerCards[pIdx][0].showBack()
+                playerCards[playerIndx][0].scaleX = 1.0
+                playerCards[playerIndx][0].scaleY = 1.0
+                playerCards[playerIndx][0].showBack()
 
-                playerCards[pIdx][1].scaleX = 1.0
-                playerCards[pIdx][1].scaleY = 1.0
-                playerCards[pIdx][1].showBack()
+                playerCards[playerIndx][1].scaleX = 1.0
+                playerCards[playerIndx][1].scaleY = 1.0
+                playerCards[playerIndx][1].showBack()
 
                 // Offene Karten für jede spiele anzeigen, ist j+2 weil erste 2 sind verdeckt
                 player.openCards.forEachIndexed { j, card ->
-                    playerCards[pIdx][j + 2].frontVisual =
+                    playerCards[playerIndx][j + 2].frontVisual =
                         cardLoader.frontImageFor(card.suit, card.value)
-                    playerCards[pIdx][j + 2].showFront()
+                    playerCards[playerIndx][j + 2].showFront()
                 }
 
                 // nur active spieler kann sein verdeckte Karten klicken und sehen
-                if (pIdx == game.currentPlayer) {
-                    playerCards[pIdx][0].onMouseClicked = {
-                        val card = game.players[pIdx].hiddenCards[0]
-                        playerCards[pIdx][0].frontVisual =
+                if (playerIndx == game.currentPlayer) {
+                    playerCards[playerIndx][0].onMouseClicked = {
+                        val card = game.players[playerIndx].hiddenCards[0]
+                        playerCards[playerIndx][0].frontVisual =
                             cardLoader.frontImageFor(card.suit, card.value)
-                        if (playerCards[pIdx][0].currentSide == CardView.CardSide.FRONT)
-                            playerCards[pIdx][0].showBack()
+                        if (playerCards[playerIndx][0].currentSide == CardView.CardSide.FRONT)
+                            playerCards[playerIndx][0].showBack()
                         else
-                            playerCards[pIdx][0].showFront()
+                            playerCards[playerIndx][0].showFront()
                     }
-                    playerCards[pIdx][1].onMouseClicked = {
-                        val card = game.players[pIdx].hiddenCards[1]
-                        playerCards[pIdx][1].frontVisual =
+                    playerCards[playerIndx][1].onMouseClicked = {
+                        val card = game.players[playerIndx].hiddenCards[1]
+                        playerCards[playerIndx][1].frontVisual =
                             cardLoader.frontImageFor(card.suit, card.value)
-                        if (playerCards[pIdx][1].currentSide == CardView.CardSide.FRONT)
-                            playerCards[pIdx][1].showBack()
+                        if (playerCards[playerIndx][1].currentSide == CardView.CardSide.FRONT)
+                            playerCards[playerIndx][1].showBack()
                         else
-                            playerCards[pIdx][1].showFront()
+                            playerCards[playerIndx][1].showFront()
                     }
                 } else {
-                    playerCards[pIdx][0].onMouseClicked = null
-                    playerCards[pIdx][1].onMouseClicked = null
+                    playerCards[playerIndx][0].onMouseClicked = null
+                    playerCards[playerIndx][1].onMouseClicked = null
                 }
             }
         }
@@ -367,7 +376,7 @@ class GameScene(private val rootService: RootService) :
         // nimm letzte 5 Log message, und am oben bis unten sind die neuste message
         val recent = game.moveLog.takeLast(5).reversed()
         logEntries.forEachIndexed { i, label ->
-            label.text = recent.getOrElse(i) { "" }
+            label.text = recent.getOrElse(i) { "" } // falls weniger als 5 dann leer text sertzen
         }
     }
 }

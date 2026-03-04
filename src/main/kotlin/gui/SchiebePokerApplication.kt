@@ -11,7 +11,7 @@ import java.util.TimerTask
  * The application initializes the [RootService] and displays the scenes.
  */
 
-class SopraApplication : BoardGameApplication("SoPra Game") {
+class SchiebePokerApplication : BoardGameApplication("SoPra Game") {
 
     /**
      * The root service instance. This is used to call service methods and access the entity layer.
@@ -23,13 +23,16 @@ class SopraApplication : BoardGameApplication("SoPra Game") {
      * The main game scene displayed in the application.
      */
 
-    private val mainMenuScene    = MenuScene(rootService)
+    private val mainNewGameMenuScene    = NewGameMenuScene(rootService)
     private val handoffScene     = IntermissionScene(rootService)
-    private val tableScene       = GameScene(rootService)
-    private val scoreBoardScene  = ResultMenu(rootService)
+    private val tableScene       = SchiebePokerGameScene(rootService)
+    private val scoreBoardScene  = ScoreboardScene(rootService)
 
     // Index Spieler der gerade muss seine Karten vorshau sehen
-    private var previewIdx = 0
+    private var previewSpielerIdx = 0
+
+    private var previewIsDone = false
+
 
     /**
      * Initializes the application by displaying the Scenes.
@@ -43,16 +46,22 @@ class SopraApplication : BoardGameApplication("SoPra Game") {
 
         // Wenn Spiel fertig ist dann score anzeigen
         rootService.addRefreshable(object : service.Refreshable {
-            override fun refreshAfterGameEnd() {
-                scoreBoardScene.updateResults()
-                showMenuScene(scoreBoardScene)
+            override fun refreshAfterTurnEnd() {
+                val game = rootService.currentGame ?: return
+                showNextPlayerHandoff(game.currentPlayer)  // ← NEU
             }
+
+                override fun refreshAfterGameEnd() {
+                    scoreBoardScene.updateResults()
+                    showMenuScene(scoreBoardScene)
+                }
         })
 
         // Hauptmenü: Spiel starten
-        mainMenuScene.startButton.onMouseClicked = {
-            mainMenuScene.startGame()
-            previewIdx = 0
+        mainNewGameMenuScene.startButton.onMouseClicked = {
+            mainNewGameMenuScene.startGame()
+            previewSpielerIdx = 0
+            previewIsDone = false
             tableScene.updateView()
             hideMenuScene()
             showGameScene(tableScene)
@@ -65,25 +74,32 @@ class SopraApplication : BoardGameApplication("SoPra Game") {
         handoffScene.readyButton.onMouseClicked = onMouseClicked@{
             val game = rootService.currentGame ?: return@onMouseClicked
 
-            tableScene.showHiddenCardsFor(previewIdx)
-            hideMenuScene()
-            showGameScene(tableScene)
+            if (!previewIsDone) {
+                // Vorschau-Phase: verdeckte Karten 5 Sek zeigen
+                tableScene.showHiddenCardsFor(previewSpielerIdx)
+                hideMenuScene()
+                showGameScene(tableScene)
 
-            // Nach 5 Sekunden zum nächsten Spieler oder Spiel starten
-            Timer().schedule(object : TimerTask() {
-                override fun run() {
-                    previewIdx++
-                    if (previewIdx < game.players.size) {
-                        tableScene.updateView()
-                        showNextPlayerHandoff(previewIdx)
-                    } else {
-                        previewIdx = 0
-                        tableScene.updateView()
-                        hideMenuScene()
-                        showGameScene(tableScene)
+                Timer().schedule(object : TimerTask() {
+                    override fun run() {
+                        previewSpielerIdx++
+                        if (previewSpielerIdx < game.players.size) {
+                            tableScene.updateView()
+                            showNextPlayerHandoff(previewSpielerIdx)
+                        } else {
+                            previewSpielerIdx = 0
+                            previewIsDone = true
+                            tableScene.updateView()
+                            hideMenuScene()
+                            showGameScene(tableScene)
+                        }
                     }
-                }
-            }, 5000)
+                }, 5000)
+
+            } else {
+                // Normaler Zugwechsel: direkt weiterspielen, kein Timer!
+                hideMenuScene()
+            }
         }
 
         // Einzelne Karte tauschen wenn speielr gewählt ein hand karte und mitte karte
@@ -114,15 +130,11 @@ class SopraApplication : BoardGameApplication("SoPra Game") {
             rootService.playerActionService.pushRight()
         }
 
-        // Zug beenden dann next turn
-        tableScene.btnConfirm.onMouseClicked = {
-            rootService.gameService.endTurn()
-        }
 
         //  neues Spiel starten
         scoreBoardScene.newGameButton.onMouseClicked = {
             hideMenuScene()
-            showMenuScene(mainMenuScene)
+            showMenuScene(mainNewGameMenuScene)
         }
 
         // spiel schliessen
@@ -130,7 +142,7 @@ class SopraApplication : BoardGameApplication("SoPra Game") {
             System.exit(0)
         }
 
-        showMenuScene(mainMenuScene)
+        showMenuScene(mainNewGameMenuScene)
         show()
     }
 
@@ -142,7 +154,7 @@ class SopraApplication : BoardGameApplication("SoPra Game") {
      */
     private fun showNextPlayerHandoff(idx: Int) {
         val game = rootService.currentGame ?: return
-        previewIdx = idx
+        previewSpielerIdx = idx
         handoffScene.updatePlayerName(game.players[idx].name)
         showMenuScene(handoffScene)
     }

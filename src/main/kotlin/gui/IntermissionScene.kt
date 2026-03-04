@@ -30,7 +30,7 @@ class IntermissionScene(private val rootService: RootService) :
     )
 
     //  Geräteübergabe
-    private val handoverHint = Label(
+    private val handover = Label(
         width = 600, height = 50,
         posX = 660, posY = 460,
         text = "Bitte übergib das Gerät",
@@ -48,7 +48,7 @@ class IntermissionScene(private val rootService: RootService) :
     }
 
     init {
-        addComponents(currentPlayerLabel, handoverHint, readyButton)
+        addComponents(currentPlayerLabel, handover, readyButton)
     }
 
     /**

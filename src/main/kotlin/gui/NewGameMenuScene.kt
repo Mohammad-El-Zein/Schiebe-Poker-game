@@ -14,7 +14,7 @@ import tools.aqua.bgw.visual.ImageVisual
  * Die MenuScene zeigt das Hauptmenü des Spiels.
  * Hier können Spieler Namen eingeben, Rundenzahl wählen und das Spiel starten.
  */
-class MenuScene(private val rootService: RootService) :
+class NewGameMenuScene(private val rootService: RootService) :
     MenuScene(1920, 1080, background = ImageVisual("Background.png") ) {
 
     private val title = Label(
@@ -84,16 +84,16 @@ class MenuScene(private val rootService: RootService) :
         font = Font(size = 28, color = Color(255, 255, 255))
     )
 
-    private var selectedRound = 2
+    private var selectedRound = 2   //automatish 2 wenn nicht gewählt
 
     private val roundButtons: List<Button> = (2..7).map { round ->
         Button(
             width = 60, height = 50,
-            posX = 75 + ((round - 2) % 2) * 70,
-            posY = 280 + ((round - 2) / 2) * 60,
+            posX = 75 + ((round - 2) % 2) * 70, //round-2 weil round fangt mit 2,round2 ist idx 0,%2 für nebeneinander
+            posY = 280 + ((round - 2) / 2) * 60, // hier / da element pro zeile
             text = "$round",
             visual = if (round == selectedRound)
-                ColorVisual(Color(255, 200, 0))
+                ColorVisual(Color(255, 200, 0)) // gelb für gewählte runde
             else
                 ColorVisual(Color(255, 255, 255))
         ).apply {
@@ -154,7 +154,7 @@ class MenuScene(private val rootService: RootService) :
         font = Font(size = 32, color = Color.BLACK, fontWeight = Font.FontWeight.BOLD)
     }
 
-    private var selectedPlayerCount = 4
+    private var selectedPlayerCount = 4 //automatish 4 player wenn nix wählen
 
     init {
         addComponents(
@@ -263,11 +263,14 @@ class MenuScene(private val rootService: RootService) :
         selectedPlayerCount = count
 
         twoPlayersButton.visual =
-            if (count == 2) ColorVisual(Color(255, 200, 0)) else ColorVisual(Color(255, 255, 255))
+            if (count == 2) ColorVisual(Color(255, 200, 0)) // button gelb wenn gewählt
+            else ColorVisual(Color(255, 255, 255))
         threePlayersButton.visual =
-            if (count == 3) ColorVisual(Color(255, 200, 0)) else ColorVisual(Color(255, 255, 255))
+            if (count == 3) ColorVisual(Color(255, 200, 0))
+             else ColorVisual(Color(255, 255, 255))
         fourPlayersButton.visual =
-            if (count == 4) ColorVisual(Color(255, 200, 0)) else ColorVisual(Color(255, 255, 255))
+            if (count == 4) ColorVisual(Color(255, 200, 0))
+            else ColorVisual(Color(255, 255, 255))
 
         player3Input.isDisabled = count < 3
         player4Input.isDisabled = count < 4
@@ -281,7 +284,7 @@ class MenuScene(private val rootService: RootService) :
      * Aktualisiert die Runden-Buttons.
      */
     private fun updateRoundButtons() {
-        roundButtons.forEach { button ->
+        roundButtons.forEach { button -> // für jede button mach so wie am nächste
             val round = button.text.toInt()
             button.visual = if (round == selectedRound)
                 ColorVisual(Color(255, 200, 0))
@@ -295,8 +298,8 @@ class MenuScene(private val rootService: RootService) :
      */
     fun startGame() {
         val names = mutableListOf<String>()
-        names.add(player1Input.text.trim().ifBlank { "Player 1" })
-        names.add(player2Input.text.trim().ifBlank { "Player 2" })
+        names.add(player1Input.text.trim().ifBlank { "Player 1" }) //trim für leerzeichen entfernen,
+        names.add(player2Input.text.trim().ifBlank { "Player 2" }) //ifBlank wenn feld leer automatish Player heißt
         if (selectedPlayerCount >= 3)
             names.add(player3Input.text.trim().ifBlank { "Player 3" })
         if (selectedPlayerCount >= 4)
