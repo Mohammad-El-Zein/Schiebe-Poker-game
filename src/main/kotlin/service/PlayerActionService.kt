@@ -2,6 +2,11 @@ package service
 
 import entity.*
 
+
+/**
+ * steuert ACtions von Players zb [pushRight] [pushLeft] [swapNothing] [swapOneCard] [swapAllCards]
+ * und macht logik von diese actions
+ */
 class PlayerActionService(private val rootService: RootService) : AbstractRefreshingService() {
 
     private fun requireGame(): SchiebePokerGame =
