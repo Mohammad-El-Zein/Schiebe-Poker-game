@@ -52,9 +52,9 @@ class IntermissionScene(private val rootService: RootService) :
     }
 
     /**
-     * Setzt den Namen des Spielers der gerade dran ist.
+     * Setzt Name des Spielers der gerade dran ist.
      *
-     * @param name Name des aktuellen Spielers
+     * @param name Name des aktuelle Spielers
      */
     fun updatePlayerName(name: String) {
         currentPlayerLabel.text = "Du bist dran, $name!"

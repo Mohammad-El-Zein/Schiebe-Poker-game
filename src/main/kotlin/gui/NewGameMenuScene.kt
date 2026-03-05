@@ -11,7 +11,7 @@ import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.visual.ImageVisual
 
 /**
- * Die MenuScene zeigt das Hauptmenü des Spiels.
+ * Die MenuScene zeigt Hauptmenü des Spiels.
  * Hier können Spieler Namen eingeben, Rundenzahl wählen und das Spiel starten.
  */
 class NewGameMenuScene(private val rootService: RootService) :
@@ -23,6 +23,25 @@ class NewGameMenuScene(private val rootService: RootService) :
         text = "Schiebe-Poker",
         font = Font(size = 60, color = Color(255, 255, 255))
     )
+
+
+    private val addPlayersButton = Button(
+        width = 220, height = 55,
+        posX = 450, posY = 700,
+        text = "Add Players",
+        visual = ColorVisual(Color(240, 230, 180))
+    ).apply {
+        font = Font(size = 32, color = Color.BLACK, fontWeight = Font.FontWeight.BOLD)
+    }
+
+    private val roundButton = Button(
+        width = 220, height = 55,
+        posX = 1230, posY = 700,
+        text = "Round",
+        visual = ColorVisual(Color(240, 230, 180))
+    ).apply {
+        font = Font(size = 32, color = Color.BLACK, fontWeight = Font.FontWeight.BOLD)
+    }
 
     private val playerNumber = Label(
         width = 200, height = 40,
@@ -136,23 +155,7 @@ class NewGameMenuScene(private val rootService: RootService) :
         font = Font(size = 32, color = Color.BLACK, fontWeight = Font.FontWeight.BOLD)
     }
 
-    private val addPlayersButton = Button(
-        width = 220, height = 55,
-        posX = 450, posY = 700,
-        text = "Add Players",
-        visual = ColorVisual(Color(240, 230, 180))
-    ).apply {
-        font = Font(size = 32, color = Color.BLACK, fontWeight = Font.FontWeight.BOLD)
-    }
 
-    private val roundButton = Button(
-        width = 220, height = 55,
-        posX = 1230, posY = 700,
-        text = "Round",
-        visual = ColorVisual(Color(240, 230, 180))
-    ).apply {
-        font = Font(size = 32, color = Color.BLACK, fontWeight = Font.FontWeight.BOLD)
-    }
 
     private var selectedPlayerCount = 4 //automatish 4 player wenn nix wählen
 
@@ -201,7 +204,7 @@ class NewGameMenuScene(private val rootService: RootService) :
     }
 
     /**
-     * Zeigt das Spieler-Panel und versteckt das Runden-Panel.
+     * Zeigt Spieler-Panel und versteckt Runden-Panel.
      */
     private fun showPlayerPanel() {
         playerNumber.isVisible = true
@@ -220,7 +223,7 @@ class NewGameMenuScene(private val rootService: RootService) :
     }
 
     /**
-     * Zeigt das Runden-Panel und versteckt das Spieler-Panel.
+     * Zeigt Runden-Panel und versteckt Spieler-Panel.
      */
     private fun showRoundPanel() {
         roundNumber.isVisible = true
@@ -257,7 +260,7 @@ class NewGameMenuScene(private val rootService: RootService) :
     }
 
     /**
-     * Setzt die Spieleranzahl und aktualisiert die UI.
+     * Setzt die Spieleranzahl und aktualisiert UI.
      */
     private fun setPlayerCount(count: Int) {
         selectedPlayerCount = count
@@ -281,7 +284,7 @@ class NewGameMenuScene(private val rootService: RootService) :
     }
 
     /**
-     * Aktualisiert die Runden-Buttons.
+     * Aktualisiert Runden-Buttons.
      */
     private fun updateRoundButtons() {
         roundButtons.forEach { button -> // für jede button mach so wie am nächste

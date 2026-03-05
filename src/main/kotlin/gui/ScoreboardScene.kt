@@ -10,8 +10,8 @@ import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 
 /**
- * Zeigt am Ende des Spiels die Rangliste aller Spieler mit ihrer
- * besten Kartenkombination und der erreichten Platzierung.
+ * Zeigt am Ende des Spiels die Rangliste von alle Spieler mit ihre
+ * besten Kartenkombination und erreichte Platzierung.
  *
  *
  */

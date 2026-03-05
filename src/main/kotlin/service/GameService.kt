@@ -106,8 +106,8 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val game = requireGame()
 
         val deck = mutableListOf<Card>()
-        for (suit in CardSuit.values()) {
-            for (value in CardValue.values()) {
+        for (suit in CardSuit.entries) {
+            for (value in CardValue.entries) {
                 deck.add(Card(suit, value))
             }
         }
@@ -157,18 +157,6 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
         onAllRefreshables { refreshAfterRefillStack() }
     }
-
-    /**hilfsfunktion:aurufen wenn push right oder left mit überprufung von draw pile ob emtpy ist*/
-    fun drawCard(): Card {
-        val game = requireGame()
-
-        if (game.drawPile.isEmpty()) {
-            refillDrawStack()
-        }
-
-        return game.drawPile.removeLast() //nimmt letzte karte auf nachziehstapel
-    }
-
 
 
     /**
@@ -231,7 +219,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
     }
 
     /**
-    * Berechnet den Wert der Kartenkombination eines Spielers (z.B. Paar, Flush, Straße).
+    * Berechnet den Wert der Kartenkombination von ein Spieler zum beispiel Paar, Flush, Straße.
      *
      * Rangliste:
      * 9 = Royal Flush

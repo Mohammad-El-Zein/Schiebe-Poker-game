@@ -23,9 +23,9 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game") {
      * The main game scene displayed in the application.
      */
 
-    private val mainNewGameMenuScene    = NewGameMenuScene(rootService)
-    private val handoffScene     = IntermissionScene(rootService)
-    private val tableScene       = SchiebePokerGameScene(rootService)
+    private val newGameMenuScene    = NewGameMenuScene(rootService)
+    private val intermissionScene     = IntermissionScene(rootService)
+    private val gameScene       = SchiebePokerGameScene(rootService)
     private val scoreBoardScene  = ScoreboardScene(rootService)
 
     // Index Spieler der gerade muss seine Karten vorshau sehen
@@ -40,15 +40,15 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game") {
 
 
     init {
-        // beim Service registrieren da können Refreshes ankommen
-        rootService.addRefreshable(tableScene)
+        // beim Service registrieren ,da können Refreshes ankommen
+        rootService.addRefreshable(gameScene)
         rootService.addRefreshable(scoreBoardScene)
 
         // Wenn Spiel fertig ist dann score anzeigen
         rootService.addRefreshable(object : service.Refreshable {
             override fun refreshAfterTurnEnd() {
                 val game = rootService.currentGame ?: return
-                showNextPlayerHandoff(game.currentPlayer)  // ← NEU
+                showNextPlayerHandoff(game.currentPlayer)  //
             }
 
                 override fun refreshAfterGameEnd() {
@@ -58,75 +58,75 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game") {
         })
 
         // Hauptmenü: Spiel starten
-        mainNewGameMenuScene.startButton.onMouseClicked = {
-            mainNewGameMenuScene.startGame()
+        newGameMenuScene.startButton.onMouseClicked = {
+            newGameMenuScene.startGame()
             previewSpielerIdx = 0
             previewIsDone = false
-            tableScene.updateView()
+            gameScene.updateView()
             hideMenuScene()
-            showGameScene(tableScene)
-            handoffScene.updatePlayerName(
+            showGameScene(gameScene)
+            intermissionScene.updatePlayerName(
                 rootService.currentGame?.players?.getOrNull(0)?.name ?: "Spieler 1")
-            showMenuScene(handoffScene)
+            showMenuScene(intermissionScene)
         }
 
         // Übergabe-Bildschirm: wenn Spieler bereit dann wird verdeckte Karten kurz zeigen
-        handoffScene.readyButton.onMouseClicked = onMouseClicked@{
+        intermissionScene.readyButton.onMouseClicked = onMouseClicked@{
             val game = rootService.currentGame ?: return@onMouseClicked
 
             if (!previewIsDone) {
                 // Vorschau-Phase: verdeckte Karten 5 Sek zeigen
-                tableScene.showHiddenCardsFor(previewSpielerIdx)
+                gameScene.showHiddenCardsFor(previewSpielerIdx)
                 hideMenuScene()
-                showGameScene(tableScene)
+                showGameScene(gameScene)
 
                 Timer().schedule(object : TimerTask() {
                     override fun run() {
                         previewSpielerIdx++
                         if (previewSpielerIdx < game.players.size) {
-                            tableScene.updateView()
+                            gameScene.updateView()
                             showNextPlayerHandoff(previewSpielerIdx)
                         } else {
                             previewSpielerIdx = 0
                             previewIsDone = true
-                            tableScene.updateView()
+                            gameScene.updateView()
                             hideMenuScene()
-                            showGameScene(tableScene)
+                            showGameScene(gameScene)
                         }
                     }
                 }, 5000)
 
             } else {
-                // Normaler Zugwechsel: direkt weiterspielen, kein Timer!
+                // wird Normaler Zugwechsel, direkt weiterspielen und kein Timer
                 hideMenuScene()
             }
         }
 
         // Einzelne Karte tauschen wenn speielr gewählt ein hand karte und mitte karte
-        tableScene.btnSwapOne.onMouseClicked = {
-            tableScene.startSwapOneMode()
-            tableScene.onSwapOneReady = { myCard, tableCard ->
+        gameScene.btnSwapOne.onMouseClicked = {
+            gameScene.startSwapOneMode()
+            gameScene.onSwapOneReady = { myCard, tableCard ->
                 rootService.playerActionService.swapOneCard(myCard, tableCard)
             }
         }
 
         // Alle drei Karten tauschen
-        tableScene.btnSwapAll.onMouseClicked = {
+        gameScene.btnSwapAll.onMouseClicked = {
             rootService.playerActionService.swapAllCards()
         }
 
         // nix  tauschen
-        tableScene.btnSwapNone.onMouseClicked = {
+        gameScene.btnSwapNone.onMouseClicked = {
             rootService.playerActionService.swapNothing()
         }
 
         // Mittelkarten nach links schieben
-        tableScene.btnShiftLeft.onMouseClicked = {
+        gameScene.btnShiftLeft.onMouseClicked = {
             rootService.playerActionService.pushLeft()
         }
 
         // Mittelkarten nach rechts schieben
-        tableScene.btnShiftRight.onMouseClicked = {
+        gameScene.btnShiftRight.onMouseClicked = {
             rootService.playerActionService.pushRight()
         }
 
@@ -134,7 +134,7 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game") {
         //  neues Spiel starten
         scoreBoardScene.newGameButton.onMouseClicked = {
             hideMenuScene()
-            showMenuScene(mainNewGameMenuScene)
+            showMenuScene(newGameMenuScene)
         }
 
         // spiel schliessen
@@ -142,20 +142,20 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game") {
             System.exit(0)
         }
 
-        showMenuScene(mainNewGameMenuScene)
+        showMenuScene(newGameMenuScene)
         show()
     }
 
     /**
-     * Setzt `previewIdx` auf den nächsten Spieler,
-     * also aktualisiert den Namen im Übergabe-Bildschirm und zeigt ihn an
+     * Setzt `previewIdx` auf nächste Spieler,
+     * also aktualisiert Name im Übergabe Bildschirm und zeigt es an
      *
      * @param idx Index des Spielers der als nächstes seine Karten sehen soll
      */
     private fun showNextPlayerHandoff(idx: Int) {
         val game = rootService.currentGame ?: return
         previewSpielerIdx = idx
-        handoffScene.updatePlayerName(game.players[idx].name)
-        showMenuScene(handoffScene)
+        intermissionScene.updatePlayerName(game.players[idx].name)
+        showMenuScene(intermissionScene)
     }
 }

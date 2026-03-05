@@ -166,10 +166,9 @@ class GameServiceTest {
         game.drawPile.clear()
         game.discardPile.addAll(cards)
 
-        val card = rootService.gameService.drawCard()
+        rootService.playerActionService.pushLeft()
 
-        assertNotNull(card)
-        assertTrue(game.drawPile.isNotEmpty())
+        assertTrue(game.discardPile.isEmpty() || game.drawPile.isNotEmpty())
     }
 
     /**
@@ -184,7 +183,7 @@ class GameServiceTest {
         game.discardPile.clear()   // hier clear machen nur für testing
 
         assertFailsWith<IllegalArgumentException> {
-            rootService.gameService.drawCard()
+            rootService.playerActionService.pushLeft()
         }
     }
 

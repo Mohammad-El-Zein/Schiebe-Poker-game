@@ -18,7 +18,7 @@ class RootService {
         val playerActionService = PlayerActionService(this)
 
         /**
-         * Registriert einen Refreshable-UI-Komponente bei allen Services, die Aktualisierungsereignisse auslösen.
+         * Registriert ein Refreshable UI Komponente bei allen Services.
          * Diese Methode sollte einmal pro Bildschirm aufgerufen werden, das auf Zustandsänderungen reagieren soll.
          */
         fun addRefreshable(newRefreshable: Refreshable) {

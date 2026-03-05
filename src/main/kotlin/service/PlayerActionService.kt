@@ -20,7 +20,8 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
 
         // Linke Karte (Index 0) auf Ablagestapel und wird automatish die 2 karte aufmitte nach links shieben
         val leftdiscardedCard = game.centerCards.removeAt(0)
-        val newCard = rootService.gameService.drawCard() // neue Karte von Nachziehstapel rechts einfügen (in Index 2)
+        if (game.drawPile.isEmpty()) rootService.gameService.refillDrawStack()
+        val newCard = game.drawPile.removeLast() // neue Karte von Nachziehstapel rechts einfügen (in Index 2)
 
         game.discardPile.add(leftdiscardedCard)
 
@@ -47,7 +48,8 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         // Rechte Karte (Index 2) auf Ablagestapel und wird automatish die 2 karte auf mitte nach rechts shieben
         val rightdiscardedCard = game.centerCards.removeAt(2)
 
-        val newCard = rootService.gameService.drawCard()  // Neue Karte vom Nachziehstapel links einfügen (Index 0)
+        if (game.drawPile.isEmpty()) rootService.gameService.refillDrawStack()
+        val newCard = game.drawPile.removeLast()  // Neue Karte vom Nachziehstapel links einfügen (Index 0)
 
         game.discardPile.add(rightdiscardedCard)
 
@@ -110,7 +112,7 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
     }
 
     /**
-     * Tauscht alle drei offenen Karten des Spielers mit den drei Karten in der Mitte.
+     * Tauscht alle drei offene Karten des Spieler mit den drei Karten in Mitte.
      * Links mit Links, Mitte mit Mitte, Rechts mit Rechts
      */
     fun swapAllCards() {

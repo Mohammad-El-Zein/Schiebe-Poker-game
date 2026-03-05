@@ -12,7 +12,7 @@ import tools.aqua.bgw.visual.ColorVisual
 
 /**
  *  Hier sieht man alle Karten, die Spieler und
- * die Aktions-Buttons für den aktuellen Zug.
+ * die Aktions-Buttons für die aktuellen Zug.
  *
  *  wird aktualisiert sich automatisch nach jeder Aktion über [Refreshable]-Interface.
  *
@@ -48,7 +48,7 @@ class SchiebePokerGameScene(private val rootService: RootService) :
         font = Font(size = 20, color = Color(255, 255, 255))
     )
 
-    private val nameLabels = listOf(             // Name auf jeden Spieler
+    private val nameLabels = listOf(  // Name auf jeden Spieler
         Label(width = 160, height = 40,
             posX = 50,   posY = 200,
             text = "Spieler 1",
@@ -127,7 +127,7 @@ class SchiebePokerGameScene(private val rootService: RootService) :
 
     // aktion bttn
     val btnSwapOne    = Button(width = 180, height = 55, posX = 760, posY = 790,
-        text = "Swap One",    visual = ColorVisual(Color(255, 200, 0)))
+        text = "Swap One",  visual = ColorVisual(Color(200, 230, 200)))
     val btnSwapAll    = Button(width = 180, height = 55, posX = 760, posY = 855,
         text = "Swap All",    visual = ColorVisual(Color(200, 230, 200)))
     val btnSwapNone   = Button(width = 180, height = 55, posX = 760, posY = 920,
@@ -187,6 +187,7 @@ class SchiebePokerGameScene(private val rootService: RootService) :
     override fun refreshAfterTurnEnd()     { updateView() }
     override fun refreshAfterRefillStack() { updateView() }
     override fun refreshAfterGameEnd()     {}
+    override fun refreshAfterGameStart()   {}
 
     /**
      * In der Einzelkarten-Tausch-Modus, muss  Spieler  zuerst eine
@@ -281,7 +282,7 @@ class SchiebePokerGameScene(private val rootService: RootService) :
     }
 
     /**
-     * Aktualisiert die gesamte Spielansicht anhand des aktuellen Spielzustands.
+     * Aktualisiert die gesamte Spielansicht anhand von aktuelle Spielzustand.
      * Wird nach jeder Aktion, nach jedem Zugwechsel und beim Rundenstart aufgerufen.
      */
     fun updateView() {
