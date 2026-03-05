@@ -1,5 +1,6 @@
 package gui
 
+import service.Refreshable
 import tools.aqua.bgw.core.BoardGameApplication
 import service.RootService
 
@@ -11,7 +12,7 @@ import java.util.TimerTask
  * The application initializes the [RootService] and displays the scenes.
  */
 
-class SchiebePokerApplication : BoardGameApplication("SoPra Game") {
+class SchiebePokerApplication : BoardGameApplication("SoPra Game"), Refreshable {
 
     /**
      * The root service instance. This is used to call service methods and access the entity layer.
