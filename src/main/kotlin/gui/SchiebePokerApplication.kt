@@ -49,13 +49,13 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game"), Refreshable 
         rootService.addRefreshable(object : service.Refreshable {
             override fun refreshAfterTurnEnd() {
                 val game = rootService.currentGame ?: return
-                showNextPlayerHandoff(game.currentPlayer)  //
+                showNextPlayerHandoff(game.currentPlayer)
             }
 
-                override fun refreshAfterGameEnd() {
-                    scoreBoardScene.updateResults()
-                    showMenuScene(scoreBoardScene)
-                }
+            override fun refreshAfterGameEnd() {
+                scoreBoardScene.updateResults()
+                showMenuScene(scoreBoardScene)
+            }
         })
 
         // Hauptmenü: Spiel starten
@@ -67,41 +67,24 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game"), Refreshable 
             hideMenuScene()
             showGameScene(gameScene)
             intermissionScene.updatePlayerName(
-                rootService.currentGame?.players?.getOrNull(0)?.name ?: "Spieler 1")
+                rootService.currentGame?.players?.getOrNull(0)?.name ?: "Spieler 1"
+            )
             showMenuScene(intermissionScene)
         }
 
-        // Übergabe-Bildschirm: wenn Spieler bereit dann wird verdeckte Karten kurz zeigen
+        // Übergabe Bildschirm
         intermissionScene.readyButton.onMouseClicked = onMouseClicked@{
-            val game = rootService.currentGame ?: return@onMouseClicked
 
             if (!previewIsDone) {
-                // Vorschau-Phase: verdeckte Karten 5 Sek zeigen
-                gameScene.showHiddenCardsFor(previewSpielerIdx)
+                gameScene.showAllCardsFor(0)
+                previewIsDone = true
                 hideMenuScene()
                 showGameScene(gameScene)
-
-                Timer().schedule(object : TimerTask() {
-                    override fun run() {
-                        previewSpielerIdx++
-                        if (previewSpielerIdx < game.players.size) {
-                            gameScene.updateView()
-                            showNextPlayerHandoff(previewSpielerIdx)
-                        } else {
-                            previewSpielerIdx = 0
-                            previewIsDone = true
-                            gameScene.updateView()
-                            hideMenuScene()
-                            showGameScene(gameScene)
-                        }
-                    }
-                }, 5000)
-
             } else {
-                // wird Normaler Zugwechsel, direkt weiterspielen und kein Timer
                 hideMenuScene()
             }
         }
+
 
         // Einzelne Karte tauschen wenn speielr gewählt ein hand karte und mitte karte
         gameScene.btnSwapOne.onMouseClicked = {

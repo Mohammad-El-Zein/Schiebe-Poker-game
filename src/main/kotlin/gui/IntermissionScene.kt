@@ -59,4 +59,7 @@ class IntermissionScene(private val rootService: RootService) :
     fun updatePlayerName(name: String) {
         currentPlayerLabel.text = "Du bist dran, $name!"
     }
+
+
+
 }

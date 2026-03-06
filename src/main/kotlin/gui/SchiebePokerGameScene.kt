@@ -86,15 +86,18 @@ class SchiebePokerGameScene(private val rootService: RootService) :
     private val playerCards: List<List<CardView>> = (0..3).map { Index ->
         val (x, y) = handCardPositions[Index] // pair(x,y) auf handCardPostions nehmen
         (0..4).map { position ->  // für jede karte auf die 5 karten
+            val extraGap = if (position >= 2) 30 else 0
             CardView(
                 width = cardW, height = cardH,
-                posX = x + position * (cardW + 10), // bedeutet abstand zwischen jeder karte ist 10
+                posX = x + position * (cardW + 10) + extraGap, // bedeutet abstand zwischen jeder karte ist 10
                 posY = y,
                 front = cardLoader.blankImage,
                 back = cardLoader.backImage
             )
         }
+
     }
+
 
     //  drei mitte offenen Karten
     private val tableCards = (0..2).map { i ->
@@ -150,7 +153,8 @@ class SchiebePokerGameScene(private val rootService: RootService) :
 
     init {
         addComponents(logBox, roundInfo, drawPile, discardPile,
-            btnSwapOne, btnSwapAll, btnSwapNone,
+            btnSwapOne, btnSwapAll,
+                    btnSwapNone,
             btnShiftLeft, btnShiftRight)
         logEntries.forEach { addComponents(it) }
         nameLabels.forEach { addComponents(it) }
@@ -187,7 +191,7 @@ class SchiebePokerGameScene(private val rootService: RootService) :
     override fun refreshAfterTurnEnd()     { updateView() }
     override fun refreshAfterRefillStack() { updateView() }
     override fun refreshAfterGameEnd()     {}
-    override fun refreshAfterGameStart()   {}
+    override fun refreshAfterGameStart()    {}
 
     /**
      * In der Einzelkarten-Tausch-Modus, muss  Spieler  zuerst eine
@@ -249,12 +253,11 @@ class SchiebePokerGameScene(private val rootService: RootService) :
         swapModeActive = false
         chosenCardIdx = -1
 
-        val game = rootService.currentGame ?: return
-        val who = game.currentPlayer
-
-        for (j in 2..4) {
-            playerCards[who][j].scaleX = 1.0   // Karten Zoom zurücksetzen
-            playerCards[who][j].scaleY = 1.0
+        for (pIdx in 0..3) {
+            for (j in 2..4) {
+                playerCards[pIdx][j].scaleX = 1.0
+                playerCards[pIdx][j].scaleY = 1.0
+            }
         }
         tableCards.forEach { it.onMouseClicked = null } //player kann nicht klick in Mitte karten
 
@@ -262,24 +265,24 @@ class SchiebePokerGameScene(private val rootService: RootService) :
     }
 
     /**
-     * Wird die beiden verdeckten Karten eines Spielers offen , das nur in der Vorschau-Phase benutzt,
-     * damit jeder Spieler kurz seine Startkarten sehen kann.
-     *
-     * @param playerIdx Index des Spielers dessen Karten aufgedeckt werden
-     */
-    fun showHiddenCardsFor(playerIdx: Int) {
+    * Zeigt alle 5 Karten eines Spielers in der Vorschau-Phase.
+    * Verdeckte Karten werden leicht vergrößert dargestellt.
+    *
+    * @param playerIdx Index des Spielers dessen Karten angezeigt werden
+    */
+    fun showAllCardsFor(playerIdx: Int) {
         val game = rootService.currentGame ?: return
         val player = game.players[playerIdx]
         val cards = playerCards[playerIdx]
 
-        player.hiddenCards.forEachIndexed { i, card ->
-            cards[i].frontVisual = cardLoader.frontImageFor(card.suit, card.value) // muss richtige Kartenbild zeigen
 
-            cards[i].showFront()     // Karte umdrehen also vorderseite statt ruckseite
-            cards[i].scaleX = 1.15 //wird bischen großer sein um player wissen das sind die verdeckte karten
-            cards[i].scaleY = 1.15
+        player.openCards.forEachIndexed { i, card ->
+            cards[i + 2].frontVisual = cardLoader.frontImageFor(card.suit, card.value)
+            cards[i + 2].showFront()
         }
     }
+
+
 
     /**
      * Aktualisiert die gesamte Spielansicht anhand von aktuelle Spielzustand.
@@ -307,14 +310,6 @@ class SchiebePokerGameScene(private val rootService: RootService) :
                 else
                     ColorVisual(Color(240, 230, 180))
 
-                // Verdeckte Karten sind nochmal normal und verdeckt
-                playerCards[playerIndx][0].scaleX = 1.0
-                playerCards[playerIndx][0].scaleY = 1.0
-                playerCards[playerIndx][0].showBack()
-
-                playerCards[playerIndx][1].scaleX = 1.0
-                playerCards[playerIndx][1].scaleY = 1.0
-                playerCards[playerIndx][1].showBack()
 
                 // Offene Karten für jede spiele anzeigen, ist j+2 weil erste 2 sind verdeckt
                 player.openCards.forEachIndexed { j, card ->
@@ -323,33 +318,19 @@ class SchiebePokerGameScene(private val rootService: RootService) :
                     playerCards[playerIndx][j + 2].showFront()
                 }
 
-                // nur active spieler kann sein verdeckte Karten klicken und sehen
                 if (playerIndx == game.currentPlayer) {
-                    playerCards[playerIndx][0].onMouseClicked = {
-                        val card = game.players[playerIndx].hiddenCards[0]
-                        playerCards[playerIndx][0].frontVisual =
-                            cardLoader.frontImageFor(card.suit, card.value)
-                        if (playerCards[playerIndx][0].currentSide == CardView.CardSide.FRONT)
-                            playerCards[playerIndx][0].showBack()
-                        else
-                            playerCards[playerIndx][0].showFront()
-                    }
-                    playerCards[playerIndx][1].onMouseClicked = {
-                        val card = game.players[playerIndx].hiddenCards[1]
-                        playerCards[playerIndx][1].frontVisual =
-                            cardLoader.frontImageFor(card.suit, card.value)
-                        if (playerCards[playerIndx][1].currentSide == CardView.CardSide.FRONT)
-                            playerCards[playerIndx][1].showBack()
-                        else
-                            playerCards[playerIndx][1].showFront()
-                    }
+                    val card0 = player.hiddenCards[0]
+                    val card1 = player.hiddenCards[1]
+                    playerCards[playerIndx][0].frontVisual = cardLoader.frontImageFor(card0.suit, card0.value)
+                    playerCards[playerIndx][0].showFront()
+                    playerCards[playerIndx][1].frontVisual = cardLoader.frontImageFor(card1.suit, card1.value)
+                    playerCards[playerIndx][1].showFront()
                 } else {
                     playerCards[playerIndx][0].onMouseClicked = null
                     playerCards[playerIndx][1].onMouseClicked = null
                 }
             }
         }
-
         // mitte karten aktualisiert und gezeigt
         game.centerCards.forEachIndexed { i, card ->
             tableCards[i].frontVisual = cardLoader.frontImageFor(card.suit, card.value)
@@ -365,7 +346,6 @@ class SchiebePokerGameScene(private val rootService: RootService) :
             discardPile.frontVisual = cardLoader.frontImageFor(top.suit, top.value)
             discardPile.showFront()
         }
-
         // Nachziehstapel immer aufruckseite solange karten enthält
         if (game.drawPile.isNotEmpty()) {
             drawPile.isVisible = true
