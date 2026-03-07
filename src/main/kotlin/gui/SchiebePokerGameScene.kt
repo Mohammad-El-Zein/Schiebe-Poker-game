@@ -326,6 +326,8 @@ class SchiebePokerGameScene(private val rootService: RootService) :
                     playerCards[playerIndx][1].frontVisual = cardLoader.frontImageFor(card1.suit, card1.value)
                     playerCards[playerIndx][1].showFront()
                 } else {
+                    playerCards[playerIndx][0].showBack()
+                    playerCards[playerIndx][1].showBack()
                     playerCards[playerIndx][0].onMouseClicked = null
                     playerCards[playerIndx][1].onMouseClicked = null
                 }
