@@ -4,8 +4,6 @@ import service.Refreshable
 import tools.aqua.bgw.core.BoardGameApplication
 import service.RootService
 
-import java.util.Timer
-import java.util.TimerTask
 
 /**
  * Represents the main application for the SoPra board game.

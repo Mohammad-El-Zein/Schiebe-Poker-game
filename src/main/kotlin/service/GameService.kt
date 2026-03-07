@@ -74,7 +74,6 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val game = requireGame()
         require(game.countAction < 2) { "Player has already performed 2 actions." }
         game.countAction++
-        onAllRefreshables { refreshAfterAction() }
     }
 
     /**
@@ -220,18 +219,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
     /**
     * Berechnet den Wert der Kartenkombination von ein Spieler zum beispiel Paar, Flush, Straße.
-     *
-     * Rangliste:
-     * 9 = Royal Flush
-     * 8 = Straight Flush
-     * 7 = Vierling
-     * 6 = Full House
-     * 5 = Flush
-     * 4 = Straße
-     * 3 = Drilling
-     * 2 = Zwei Paare
-     * 1 = Ein Paar
-     * 0 = Höchste Karte
+
      *
      * @param player der zu bewertende Spieler.
      * @return numerischer Wert der Handstärke.

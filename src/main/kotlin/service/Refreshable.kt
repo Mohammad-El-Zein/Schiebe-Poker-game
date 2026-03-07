@@ -1,6 +1,5 @@
 package service
 
-import entity.Player
 
 /**
  * This interface provides a mechanism for the service layer classes to communicate
