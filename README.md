@@ -15,17 +15,24 @@
 
 ## 🚀 Schnellstart
 
-1. **Repository klonen:**
-   ```bash
-   git clone https://github.com/Mohammad-El-Zein/Schiebe-Poker-game.git
-   ```
-2. **Projekt öffnen** in IntelliJ IDEA
-3. **Starten** über Gradle:
-   ```bash
-   ./gradlew run
-   ```
+<table>
+<tr>
+<td>
+
+### ⬇️ [Download Blokus Game v1.0](https://github.com/Mohammad-El-Zein/Schiebe-Poker-game/releases/latest)
+
+</td>
+</tr>
+</table>
+
+1. **Download:** Klicke auf den Link oben und lade `Play-SchiebePoker.zip` herunter
+2. **Entpacken:** Entpacke die ZIP-Datei
+3. **Starten:** Gehe zu `distribution/bin/` und doppelklicke auf:
+   - **Windows:** `Projekt1.bat`
+   - **Mac/Linux:** `Projekt1`
 4. **Spielen!** 🎮
 
+> 💡 *Keine Installation nötig – einfach entpacken und spielen!*
 ---
 
 ## 📋 Über das Projekt
