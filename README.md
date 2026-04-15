@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <strong>Eine Kotlin-Implementierung des Kartenspiels „Schiebe-Poker" (SoPra-Variante) mit Hotseat-Modus, Spielprotokoll und Poker-Wertung.</strong>
+  <strong>Eine Kotlin-Implementierung des Kartenspiels „Schiebe-Poker"  mit Hotseat-Modus, Spielprotokoll und Poker-Wertung.</strong>
 </p>
 
 ---
@@ -26,8 +26,6 @@
    ```
 4. **Spielen!** 🎮
 
-> 💡 *Voraussetzung: JDK 17+ und Gradle 8.x*
-
 ---
 
 ## 📋 Über das Projekt
@@ -38,14 +36,12 @@
 
 Jede*r Spieler*in erhält zu Beginn **2 verdeckte** und **3 offene** Karten. Drei Karten liegen offen in der Mitte. Die Spieler*innen einigen sich vor Spielstart auf **2–7 Runden**.
 
-> 🎓 *Entwickelt im Rahmen des Softwarepraktikums (SoPra) an der TU Dortmund*
-
 ---
 
 ## ✨ Features
 
-| Feature | Beschreibung |
-|---------|-------------|
+|         Feature       |     Beschreibung        |
+|-----------------------|--------------------------|
 | 👥 **Hotseat-Modus** | Alle Spieler*innen spielen am gleichen Bildschirm |
 | 🙈 **Privatsphäre-Screen** | Verdeckt alle Karten zwischen den Zügen |
 | 📋 **Spielprotokoll** | Alle Aktionen werden live protokolliert |
@@ -81,12 +77,8 @@ Pro Zug führt jede*r Spieler*in **genau zwei Aktionen** aus (beliebig kombinier
 Die Hand jedes Spielenden besteht aus **2 verdeckten + 3 offenen Karten** und wird nach Standard-**Poker-Regeln** gewertet:
 
 ```
-Royal Flush  >  Straight Flush  >  Vierling  >  Full House  >  Flush
-     >  Straße  >  Drilling  >  Zwei Paare  >  Paar  >  Höchste Karte
+Royal Flush  >  Straight Flush  >  Vierling  >  Full House  >  Flush >  Straße  >  Drilling  >  Zwei Paare  >  Paar  >  Höchste Karte
 ```
-
-> ⚖️ *Spieler*innen mit gleicher Handstärke gelten als unentschieden – unabhängig von den Kartenwerten.*
-
 ---
 
 ## 🛠️ Tech Stack
@@ -104,19 +96,10 @@ src/
 ├── main/kotlin/
 │   ├── entity/          # Spielobjekte (Card, Player, GameState)
 │   ├── service/         # Spiellogik & Regelprüfung
-│   └── view/            # UI-Komponenten (BGW)
+│   └── gui/             # UI-Komponenten (BGW)
 └── test/kotlin/         # Unit Tests
 ```
 
----
-
-## 🧪 Tests ausführen
-
-```bash
-./gradlew test
-```
-
----
 
 ## 👨‍💻 Autor
 
