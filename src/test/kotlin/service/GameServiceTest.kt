@@ -36,7 +36,7 @@ class GameServiceTest {
         assertEquals(0, game.currentPlayer)
         assertEquals(1, game.currentRound)
 
-        game.players.forEach { player ->
+        game.players.forEach { player -> // geht für jede player
             assertEquals(2, player.hiddenCards.size)
             assertEquals(3, player.openCards.size)
         }

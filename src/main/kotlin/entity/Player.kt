@@ -16,5 +16,6 @@ package entity
 class Player (
     val name : String,
     val hiddenCards : MutableList<Card> = mutableListOf(),   /** die spieler 2 verdeckte karten*/
-    val openCards : MutableList<Card> = mutableListOf()      /** spieler 3   offenes karten*/
+    val openCards : MutableList<Card> = mutableListOf(), /** spieler 3   offenes karten*/
+    var punkt : Int = 0
 )

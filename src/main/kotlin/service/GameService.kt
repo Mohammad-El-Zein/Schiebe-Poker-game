@@ -30,10 +30,13 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
         val startIndex = playerNames.indices.random()
 
+        //subList(von,bis)
         val reorderedNames = playerNames.subList(startIndex, playerNames.size) + playerNames.subList(0, startIndex)
-        // Liste neu anordnen: Startspieler=Index 0,rechts=1, gegenüber=2, links=3
+        // zb wenn start index =2 dann reorderedNames= playerNames( index2,index 3) + playerNames(idx 0, idx 1)
+        //zb war listOf("A","B","C","D") und startIndex ist B dann wird so:("B","C","D") +("A")
 
         game.players.addAll(reorderedNames.map { Player(it) })
+        //für jede NAme wird ein Player objekt erstellt
 
 
         game.currentPlayer = 0 // startspieler ist immer Index 0
@@ -53,7 +56,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      */
     private fun requireGame(): SchiebePokerGame =
         rootService.currentGame ?: throw IllegalStateException("No active game found so should call createGame first.")
-
+    // ?: bedeutet das wenn currentgame null ist
 
     /**
      * bereitet  Züge des aktuellen Spieler vor, mit genau 2 aktionen für jede spieler Turn.
@@ -71,7 +74,9 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      * @throws IllegalArgumentException wenn spieler bereit zwei Aktionen ausgeführt hat.
      */
     fun consumeAction() {
-        val game = requireGame()
+        val game = requireGame()  // Oder kann auch so sein: val game = checkNotNull(rootService.currentGame)
+        //{"No active game found so should call createGame first."}
+
         require(game.countAction < 2) { "Player has already performed 2 actions." }
         game.countAction++
     }
@@ -105,14 +110,13 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val game = requireGame()
 
         val deck = mutableListOf<Card>()
-        for (suit in CardSuit.entries) {
+        for (suit in CardSuit.entries) {  //entries gibt alle Werte von Enums als Liste zurück
             for (value in CardValue.entries) {
                 deck.add(Card(suit, value))
             }
         }
 
         deck.shuffle()
-        game.drawPile.clear()
         game.drawPile.addAll(deck)
     }
 
@@ -175,8 +179,6 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
         calculateScore()
 
-        createLogEntry("Game ended after ${game.gameRound} rounds.")
-
         onAllRefreshables { refreshAfterGameEnd() }
 
     }
@@ -189,13 +191,12 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
     private fun calculateScore() {
         val game = requireGame()
 
-        val sortedPlayers =
-            game.players.sortedByDescending { calculateHandCards(it) }
+        val sortedPlayers = //sortieren speielr nach ihre hanstärke,calculateHand gibt zahlen zuruck
+            game.players.sortedByDescending { calculateHandCards(it) - it.punkt }//sortebbydescending: goßte zahl zuerst
 
-        game.playerScores.clear()
 
-        sortedPlayers.forEachIndexed { platzierung, player ->
-            val playerIndex = game.players.indexOf(player)
+        sortedPlayers.forEachIndexed { platzierung, player -> //foreachindex gibt 2 sachen gleiczeitig index, name
+            val playerIndex = game.players.indexOf(player)     // hier index habe ich   platzierung genennt
             val handName = handValueToString(calculateHandCards(player))
 
             game.playerScores.add(
@@ -229,6 +230,8 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val values = hand.map { valuesToInt(it.value) } // 5 hand karten in Int wechseln
         val suits = hand.map { it.suit } // liste der farben
 
+
+        //groupingBy { it } gruppiert gleiche Zahlen zusammen ,eachCount(): zählt wie oft jede Zahl vorkommt
         val valueCounts = values.groupingBy { it }.eachCount() // jede vaalue wie viel mal es gibt
         val counts = valueCounts.values.sortedDescending() // zb (4,1): 4 karten gleiche value, 1karte andere value
 
@@ -260,20 +263,29 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
      * Wandelt Kartenwerte von ENUM  in Zahlen um (z.B. ACE -> 14).
      */
     private fun valuesToInt(value: CardValue): Int = when (value) {
-        CardValue.TWO   -> 2
+        CardValue.TWO -> 2
         CardValue.THREE -> 3
-        CardValue.FOUR  -> 4
-        CardValue.FIVE  -> 5
-        CardValue.SIX   -> 6
+        CardValue.FOUR -> 4
+        CardValue.FIVE -> 5
+        CardValue.SIX -> 6
         CardValue.SEVEN -> 7
         CardValue.EIGHT -> 8
-        CardValue.NINE  -> 9
-        CardValue.TEN   -> 10
-        CardValue.JACK  -> 11
+        CardValue.NINE -> 9
+        CardValue.TEN -> 10
+        CardValue.JACK -> 11
         CardValue.QUEEN -> 12
-        CardValue.KING  -> 13
-        CardValue.ACE   -> 14
+        CardValue.KING -> 13
+        CardValue.ACE -> 14
+
+
     }
+
+
+
+
+
+
+
 
 
 

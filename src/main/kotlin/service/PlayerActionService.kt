@@ -141,6 +141,25 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         onAllRefreshables { refreshAfterAction() }
     }
 
+    fun shiftAll () {
+        val game = checkNotNull(rootService.currentGame) { "No active game found." }
+
+        rootService.gameService.consumeAction()
+
+        game.discardPile.addAll(game.centerCards)
+
+        repeat(3) {
+            game.centerCards.add(game.drawPile.removeLast())
+        }
+
+        game.players[game.currentPlayer].punkt++
+        onAllRefreshables { refreshAfterAction()}
+
+
+    }
+
+
+
 
 
 

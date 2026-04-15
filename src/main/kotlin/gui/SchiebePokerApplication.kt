@@ -27,11 +27,6 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game"), Refreshable 
     private val gameScene       = SchiebePokerGameScene(rootService)
     private val scoreBoardScene  = ScoreboardScene(rootService)
 
-    // Index Spieler der gerade muss seine Karten vorshau sehen
-    private var previewSpielerIdx = 0
-
-    private var previewIsDone = false
-
 
     /**
      * Initializes the application by displaying the Scenes.
@@ -45,7 +40,7 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game"), Refreshable 
 
         // Wenn Spiel fertig ist dann score anzeigen
         rootService.addRefreshable(object : service.Refreshable {
-            override fun refreshAfterTurnEnd() {
+            override fun refreshAfterTurnEnd() {  //wenn zug endet übergabe bildschirm anzeigen
                 val game = rootService.currentGame ?: return
                 showNextPlayerHandoff(game.currentPlayer)
             }
@@ -59,8 +54,6 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game"), Refreshable 
         // Hauptmenü: Spiel starten
         newGameMenuScene.startButton.onMouseClicked = {
             newGameMenuScene.startGame()
-            previewSpielerIdx = 0
-            previewIsDone = false
             gameScene.updateView()
             hideMenuScene()
             showGameScene(gameScene)
@@ -72,15 +65,7 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game"), Refreshable 
 
         // Übergabe Bildschirm
         intermissionScene.readyButton.onMouseClicked = onMouseClicked@{
-
-            if (!previewIsDone) {
-                gameScene.showAllCardsFor(0)
-                previewIsDone = true
                 hideMenuScene()
-                showGameScene(gameScene)
-            } else {
-                hideMenuScene()
-            }
         }
 
 
@@ -136,7 +121,6 @@ class SchiebePokerApplication : BoardGameApplication("SoPra Game"), Refreshable 
      */
     private fun showNextPlayerHandoff(idx: Int) {
         val game = rootService.currentGame ?: return
-        previewSpielerIdx = idx
         intermissionScene.updatePlayerName(game.players[idx].name)
         showMenuScene(intermissionScene)
     }

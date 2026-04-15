@@ -3,7 +3,7 @@ package entity
 /**
  *
  Stores the current state of a Schiebe-Poker game. *
- * This class contains all relevant data to run the game like players, card piles, the current round
+ * This class contains all relevant data to run the game +like players, card piles, the current round
  * and the action counter, and it does not contain game logic, logic is modified by the services.
  * @property players  list of players there participating in the game (2–4 players).
  * @property currentPlayer  index of the player whose turn is.
@@ -18,8 +18,8 @@ package entity
 
 
 class SchiebePokerGame (
-    val players: MutableList<Player> = mutableListOf(),
-    var currentPlayer: Int = 0,
+    val players: MutableList<Player> = mutableListOf(),        //val listen nicht ersetzen,nur hinzu ,geleert...
+    var currentPlayer: Int = 0,                                //var  wird gestezt
     var gameRound: Int = 0,
     var currentRound: Int = 0,
     var countAction: Int = 0,

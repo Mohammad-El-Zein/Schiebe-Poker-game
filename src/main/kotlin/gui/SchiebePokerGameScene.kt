@@ -149,7 +149,11 @@ class SchiebePokerGameScene(private val rootService: RootService) :
      *  aufgerufen wird sobald Spieler beide Karten für den
      * Einzeltausch ausgewählt hat, also seone eigeneKarte und  Mittelkarte).
      */
-    var onSwapOneReady: ((playerCardIdx: Int, centerCardIdx: Int) -> Unit)? = null // ?=null kann niemand  schongesetzt
+
+    // ist ein callback Funktion die aufgerufen wird wenn Spieler beide Karten gewählt hat
+    // ? = kann null sein (also noch nicht gesetzt)
+    // (playerCardIdx: Int, centerCardIdx: Int) -> Unit = nimmt 2 Int Werte, gibt nichts zurück
+    var onSwapOneReady: ((playerCardIdx: Int, centerCardIdx: Int) -> Unit)? = null
 
     init {
         addComponents(logBox, roundInfo, drawPile, discardPile,
@@ -202,9 +206,11 @@ class SchiebePokerGameScene(private val rootService: RootService) :
         swapModeActive = true
         chosenCardIdx = -1
 
-        val game = rootService.currentGame ?: return
-        val who = game.currentPlayer
+        //?:  heisst Elvis-Operator ,Wenn linke Wert nicht null,benutze ihn wenn null nutze rechte Teil
+        val game = rootService.currentGame ?: return // wenn null dann beendet, wie if(game==null={return}
+        val who = game.currentPlayer //index der current spieler
 
+        //handkart  klickbar machen
         for (j in 0..2) {  //handkart
             val viewIdx = j + 2  //da offenen Karten am unsere gui an Idx 2,3,4 liegen, also ist was sehen in gui idx
             val backendIdx = j  // normal index in spiellogik, also normal idx 0,1,2
@@ -214,11 +220,15 @@ class SchiebePokerGameScene(private val rootService: RootService) :
             }
         }
 
+        //mitteKarten klickbar machen
         for (k in 0..2) {  //mittelkart
             val viewIndex = k
             tableCards[k].onMouseClicked = {
                 if (chosenCardIdx != -1) {
-                    // also invoke hier ist , ruf dieses funktion wenn nicht null ist
+
+                    //if (onSwapOneReady != null) {onSwapOneReady.invoke(chosenCardIdx, viewIndex)}
+                    //als logik: onSwaoOneReady(1,0) ,taushen spielkarte 1 mit mittelkarte 0
+                    // also invoke benutz heir wegen Safe call, ruf dieses funktion nur wenn nicht null ist
                     onSwapOneReady?.invoke(chosenCardIdx, viewIndex)
                     cancelSwapOneMode()
 
@@ -253,8 +263,8 @@ class SchiebePokerGameScene(private val rootService: RootService) :
         swapModeActive = false
         chosenCardIdx = -1
 
-        for (pIdx in 0..3) {
-            for (j in 2..4) {
+        for (pIdx in 0..3) { // für alle spieler
+            for (j in 2..4) {  // alle ofene hand karten
                 playerCards[pIdx][j].scaleX = 1.0
                 playerCards[pIdx][j].scaleY = 1.0
             }
@@ -265,8 +275,7 @@ class SchiebePokerGameScene(private val rootService: RootService) :
     }
 
     /**
-    * Zeigt alle 5 Karten eines Spielers in der Vorschau-Phase.
-    * Verdeckte Karten werden leicht vergrößert dargestellt.
+    * Zeigt alle 5 Karten des ersten  Spielers wenn er bereit drückt.
     *
     * @param playerIdx Index des Spielers dessen Karten angezeigt werden
     */
@@ -291,7 +300,7 @@ class SchiebePokerGameScene(private val rootService: RootService) :
     fun updateView() {
         val game = rootService.currentGame ?: return
 
-        roundInfo.text = "Runde ${game.currentRound} / ${game.gameRound}" //7aktuelle runde gezeigt
+        roundInfo.text = "Runde ${game.currentRound} / ${game.gameRound}" //aktuelle runde gezeigt
 
         // Spieler Bereich aktualisieren, zb wnn 2 spieler, wird die name label für SpieleIdx 2 und 3 nicht gezeigt
         for (i in 0..3) {
