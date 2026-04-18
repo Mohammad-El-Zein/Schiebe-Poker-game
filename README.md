@@ -19,7 +19,7 @@
 <tr>
 <td>
 
-### ⬇️ [Download Blokus Game v1.0](https://github.com/Mohammad-El-Zein/Schiebe-Poker-game/releases/latest)
+### ⬇️ [Download Schiebe-Poker Game](https://github.com/Mohammad-El-Zein/Schiebe-Poker-game/releases/latest)
 
 </td>
 </tr>
